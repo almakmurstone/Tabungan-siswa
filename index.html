@@ -51,7 +51,6 @@
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
     .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 
-    /* UKURAN STRUK CETAK THERMAL 80mm */
     .receipt-paper {
       width: 78mm; margin: 0 auto; background: white; padding: 12px; font-family: 'Courier Prime', monospace; color: black; font-size: 11px; border: 1px dashed #cbd5e1;
     }
@@ -122,13 +121,11 @@
 
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
 
-    <!-- TAB: POS KASIR TRANSAKSI PERDAGANGAN (FORM BARANG, SLIP & RIWAYAT) -->
+    <!-- TAB: POS KASIR TRANSAKSI PERDAGANGAN -->
     <div id="tab-pos" class="tab-content space-y-4 sm:space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         
-        <!-- FORM INPUT BARANG PERDAGANGAN & RINCIAN BELANJA -->
         <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-          
           <!-- FORM INPUT BARANG -->
           <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="border-b pb-3">
@@ -187,7 +184,7 @@
             </div>
           </div>
 
-          <!-- FITUR BARU: RIWAYAT TRANSAKSI PERDAGANGAN / KASIR TOKO -->
+          <!-- RIWAYAT TRANSAKSI PERDAGANGAN -->
           <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
               <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
@@ -213,10 +210,9 @@
               </table>
             </div>
           </div>
-
         </div>
 
-        <!-- PEMBAYARAN VIA SCANNER BARCODE PELAJAR -->
+        <!-- PEMBAYARAN VIA SCANNER BARCODE KARTU SISWA -->
         <div class="space-y-4">
           <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800 sticky top-20">
             <div>
@@ -543,7 +539,7 @@
 
   </main>
 
-  <!-- MODAL POP-UP KHUSUS CEK SALDO MANDIRI -->
+  <!-- MODAL CEK SALDO MANDIRI -->
   <div id="modal-balance-result" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-xs space-y-4 border border-emerald-500/30">
       <button onclick="closeModalBalanceResult()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
@@ -606,7 +602,7 @@
     </div>
   </div>
 
-  <!-- MODAL FITUR BARU: SLIP STRUK NOTA BELANJA PERDAGANGAN -->
+  <!-- MODAL SLIP STRUK NOTA BELANJA -->
   <div id="modal-pos-receipt" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4 no-print border border-slate-300">
       <button onclick="closeModalPosReceipt()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
@@ -616,10 +612,7 @@
         <p class="text-[10px] text-slate-500">Pratinjau Slip Nota Belanja Kasir Toko/Kantin</p>
       </div>
 
-      <!-- KERTAS STRUK THERMAL METODE PRATINJAU -->
-      <div id="receipt-print-area" class="receipt-paper shadow-inner rounded space-y-2">
-        <!-- RENDER STRUK THERMAL VIA JAVASCRIPT -->
-      </div>
+      <div id="receipt-print-area" class="receipt-paper shadow-inner rounded space-y-2"></div>
 
       <div class="flex gap-2 pt-2 no-print">
         <button onclick="closeModalPosReceipt()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 text-xs">Tutup</button>
@@ -631,7 +624,7 @@
   <canvas id="receipt-canvas" class="hidden"></canvas>
   <div id="toast-container" class="fixed bottom-16 sm:bottom-5 right-3 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
-  <!-- JAVASCRIPT ENGINE LENGKAP -->
+  <!-- JAVASCRIPT ENGINE DENGAN CONFIG SCANNER KAMERA BERKUALITAS TINGGI -->
   <script>
     function generateBarcodeSVG(text) {
       const cleanText = String(text || '000000').trim();
@@ -795,7 +788,40 @@
 
     function triggerPrint() { window.print(); }
 
-    /* FUNGSI KASIR PERDAGANGAN (FORM BARANG, SLIP & RIWAYAT) */
+    /* FUNGSI UTAMA ENGINE SCANNER KAMERA YANG DIPERBAIKI UTK ANDROID BARCODE KARTU ID */
+    function createScannerConfig() {
+      return {
+        fps: 25,
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          return {
+            width: Math.floor(minEdge * 0.9),
+            height: Math.floor(minEdge * 0.45)
+          };
+        },
+        aspectRatio: 1.777778,
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true
+        },
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.QR_CODE
+        ]
+      };
+    }
+
+    function getCameraConstraint() {
+      return {
+        facingMode: { exact: "environment" },
+        width: { min: 1280, ideal: 1920 },
+        height: { min: 720, ideal: 1080 },
+        focusMode: "continuous"
+      };
+    }
+
+    /* KASIR PERDAGANGAN POS */
     function handlePosAddItem(e) {
       e.preventDefault();
       const name = document.getElementById('pos-item-name').value.trim();
@@ -883,10 +909,18 @@
       document.getElementById('btn-pos-camera-toggle').innerText = '🛑 Stop Kamera';
 
       posQrScanner = new Html5Qrcode("pos-qr-reader");
-      posQrScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 130 } }, (decodedText) => {
+      const onScanSuccess = (decodedText) => {
         document.getElementById('pos-scan-input').value = decodedText;
         processPosPayment(); stopPosCameraScanner();
-      }, () => {}).then(() => { isPosCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera POS", "error"); stopPosCameraScanner(); });
+      };
+
+      posQrScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
+        .then(() => { isPosCameraActive = true; })
+        .catch(() => {
+          posQrScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
+            .then(() => { isPosCameraActive = true; })
+            .catch(() => { showToast("Gagal membuka kamera belakang Android", "error"); stopPosCameraScanner(); });
+        });
     }
 
     function stopPosCameraScanner() {
@@ -935,7 +969,6 @@
 
       saveStorage();
       showToast(`Transaksi ${formatRupiah(totalAmount)} oleh ${student.name} Berhasil!`);
-      
       showPosReceiptModal(posTxRecord.id);
 
       clearPosCart();
@@ -945,7 +978,6 @@
       renderPassbook();
     }
 
-    /* FITUR STRUK CETAK NOTA PERDAGANGAN */
     function showPosReceiptModal(posTxId) {
       const record = posHistory.find(h => h.id === posTxId);
       if (!record) return;
@@ -1029,9 +1061,18 @@
       if (badge) { badge.innerText = 'KAMERA AKTIF'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500 text-slate-900 font-bold'; }
 
       html5QrCodeScanner = new Html5Qrcode("qr-reader");
-      html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 280, height: 140 } }, (decodedText) => {
-        document.getElementById('scan-input').value = decodedText; handleScanCard(); stopCameraScanner();
-      }, () => {}).then(() => { isCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera scanner", "error"); stopCameraScanner(); });
+      const onScanSuccess = (decodedText) => {
+        document.getElementById('scan-input').value = decodedText;
+        handleScanCard(); stopCameraScanner();
+      };
+
+      html5QrCodeScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
+        .then(() => { isCameraActive = true; })
+        .catch(() => {
+          html5QrCodeScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
+            .then(() => { isCameraActive = true; })
+            .catch(() => { showToast("Gagal membuka kamera scanner", "error"); stopCameraScanner(); });
+        });
     }
 
     function stopCameraScanner() {
@@ -1122,9 +1163,18 @@
       document.getElementById('btn-balance-cam-toggle').innerText = '🛑 Stop Kamera';
 
       balanceQrScanner = new Html5Qrcode("balance-qr-reader");
-      balanceQrScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 130 } }, (decodedText) => {
-        document.getElementById('balance-query-input').value = decodedText; executeBalanceCheck(); stopBalanceCamera();
-      }, () => {}).then(() => { isBalanceCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera scan saldo", "error"); stopBalanceCamera(); });
+      const onScanSuccess = (decodedText) => {
+        document.getElementById('balance-query-input').value = decodedText;
+        executeBalanceCheck(); stopBalanceCamera();
+      };
+
+      balanceQrScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
+        .then(() => { isBalanceCameraActive = true; })
+        .catch(() => {
+          balanceQrScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
+            .then(() => { isBalanceCameraActive = true; })
+            .catch(() => { showToast("Gagal membuka kamera scan saldo", "error"); stopBalanceCamera(); });
+        });
     }
 
     function stopBalanceCamera() {
