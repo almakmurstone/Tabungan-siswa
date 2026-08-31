@@ -187,6 +187,11 @@
         </div>
 
         <div class="flex items-center gap-2">
+          <!-- TOMBOL FULL SCREEN BARU -->
+          <button onclick="toggleFullScreen()" id="btn-fullscreen-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700 transition" title="Layar Penuh / Full Screen">
+            ⛶ <span class="hidden lg:inline">Full Screen</span>
+          </button>
+
           <button onclick="toggleAudio()" id="btn-sound-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700 transition" title="Aktifkan/Matikan Suara Audio Teller">
             🔊 <span class="hidden sm:inline">Suara: ON</span>
           </button>
@@ -877,6 +882,50 @@
 
   <!-- JAVASCRIPT ENGINE UTAMA -->
   <script>
+    /* -------------------------------------------------------------------------- */
+    /* FULL SCREEN ENGINE                                                         */
+    /* -------------------------------------------------------------------------- */
+    function toggleFullScreen() {
+      const btn = document.getElementById('btn-fullscreen-toggle');
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) { /* Safari */
+          docEl.webkitRequestFullscreen();
+        } else if (docEl.msRequestFullscreen) { /* IE11 */
+          docEl.msRequestFullscreen();
+        }
+        if (btn) btn.innerHTML = '🗗 <span class="hidden lg:inline">Exit Full</span>';
+        showToast('Mode Layar Penuh diaktifkan');
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+          document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+          document.msExitFullscreen();
+        }
+        if (btn) btn.innerHTML = '⛶ <span class="hidden lg:inline">Full Screen</span>';
+        showToast('Keluar dari Layar Penuh');
+      }
+    }
+
+    // Deteksi event perubahan status Full Screen (misal pengguna tekan tombol Esc)
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
+    document.addEventListener('msfullscreenchange', handleFullScreenChange);
+
+    function handleFullScreenChange() {
+      const btn = document.getElementById('btn-fullscreen-toggle');
+      if (!btn) return;
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+        btn.innerHTML = '🗗 <span class="hidden lg:inline">Exit Full</span>';
+      } else {
+        btn.innerHTML = '⛶ <span class="hidden lg:inline">Full Screen</span>';
+      }
+    }
+
     /* -------------------------------------------------------------------------- */
     /* AUDIO SYNTHESIZER ENGINE                                                   */
     /* -------------------------------------------------------------------------- */
