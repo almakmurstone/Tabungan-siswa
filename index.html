@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
-  <title>TabungKu Smart Banking - Sistem Perbankan Sekolah Pro</title>
+  <title>TabungKu Smart Banking - Perbankan & POS Perdagangan Sekolah</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,20 +29,21 @@
     .passbook-bank-sheet {
       width: 210mm; height: 150mm; box-sizing: border-box; margin: 0 auto; overflow: hidden; position: relative; background: white;
     }
-    .passbook-row { height: 7.5mm; line-height: 7.5mm; }
-    .id-card-pvc { width: 85.6mm; height: 53.98mm; box-sizing: border-box; }
-    .digital-card-container {
-      width: 100%; max-width: 380px; aspect-ratio: 1.586 / 1; box-sizing: border-box; margin: 0 auto;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    .passbook-row-height { height: 8mm; line-height: 8mm; }
+    
+    .id-card-pvc {
+      width: 85.6mm; height: 53.98mm; box-sizing: border-box;
     }
-    .receipt-thermal {
-      width: 58mm; min-height: 100mm; padding: 3mm; font-family: 'Courier Prime', monospace; font-size: 10px; line-height: 1.2; background: white; color: black; margin: 0 auto;
+    
+    .digital-card-container {
+      width: 100%; max-width: 400px; aspect-ratio: 1.586 / 1; box-sizing: border-box; margin: 0 auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
     }
 
-    .theme-green { background: linear-gradient(135deg, #064e3b, #047857, #022c22); color: #fde047; }
-    .theme-blue { background: linear-gradient(135deg, #0f172a, #1e3a8a, #1e40af); color: #93c5fd; }
-    .theme-maroon { background: linear-gradient(135deg, #450a0a, #7f1d1d, #991b1b); color: #fef08a; }
-    .theme-black { background: linear-gradient(135deg, #090d16, #1e293b, #0f172a); color: #f59e0b; }
+    .theme-green { background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #022c22 100%) !important; color: #ffffff !important; }
+    .theme-blue { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1e40af 100%) !important; color: #ffffff !important; }
+    .theme-maroon { background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 50%, #991b1b 100%) !important; color: #ffffff !important; }
+    .theme-black { background: linear-gradient(135deg, #090d16 0%, #1e293b 50%, #0f172a 100%) !important; color: #ffffff !important; }
 
     button, input, select { touch-action: manipulation; }
     .active-scale { transition: transform 0.1s ease; }
@@ -50,42 +51,44 @@
     .pb-safe { padding-bottom: env(safe-area-inset-bottom, 16px); }
     .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
 
+    /* UKURAN STRUK CETAK THERMAL 80mm */
+    .receipt-paper {
+      width: 78mm; margin: 0 auto; background: white; padding: 12px; font-family: 'Courier Prime', monospace; color: black; font-size: 11px; border: 1px dashed #cbd5e1;
+    }
+
     @media print {
       @page { size: auto; margin: 0mm; }
       body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; }
       .no-print { display: none !important; }
       .print-container { display: block !important; margin: 0 !important; padding: 0 !important; }
+      .receipt-paper { border: none !important; width: 100% !important; padding: 5mm !important; }
       .passbook-bank-sheet { page-break-after: always; box-shadow: none !important; border: none !important; width: 210mm !important; height: 150mm !important; background: transparent !important; }
     }
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col pb-20 md:pb-0">
 
-  <!-- HEADER UTAMA -->
+  <!-- HEADER NAVIGATION -->
   <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md pt-safe no-print">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center gap-2.5">
-          <div id="header-logo-wrapper" class="bg-emerald-500 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale overflow-hidden p-1" onclick="switchTab('passbook')">
+          <div id="header-logo-wrapper" class="bg-emerald-500 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale overflow-hidden p-1" onclick="switchTab('pos')">
             <img id="header-logo-img" src="" class="w-full h-full object-contain hidden">
-            <span id="header-logo-placeholder" class="text-lg">🏦</span>
+            <span id="header-logo-placeholder" class="text-lg">🛒</span>
           </div>
           <div>
             <h1 class="text-base sm:text-lg font-bold leading-none text-white flex items-center gap-1.5">
               Tabung<span class="text-emerald-400">Ku</span> Smart Banking
             </h1>
-            <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Perbankan Sekolah & Passbook Pro</p>
+            <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Sistem Perbankan & POS Kasir Perdagangan</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
-          <button onclick="toggleFullScreen()" id="btn-fullscreen-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700 transition">⛶ Full</button>
-          <button onclick="toggleAudio()" id="btn-sound-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700 transition">🔊 ON</button>
+          <button onclick="toggleAudio()" id="btn-sound-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700">🔊 ON</button>
           <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
-            <span class="text-slate-400">Kas:</span>
+            <span class="text-slate-400">Total Kas:</span>
             <span id="header-total-balance" class="font-extrabold text-emerald-400">Rp 0</span>
           </div>
           <button onclick="openModalNewStudent()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl flex items-center gap-1 shadow">➕ Siswa</button>
@@ -93,92 +96,332 @@
       </div>
     </div>
 
-    <!-- SUB-NAVIGASI DESKTOP -->
+    <!-- SUB-NAV DESKTOP -->
     <div class="hidden md:block bg-slate-800 border-t border-slate-700/60 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto scrollbar-none">
-        <button onclick="switchTab('passbook')" id="btn-tab-passbook" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">📖 Cetak Buku</button>
-        <button onclick="switchTab('transaction')" id="btn-tab-transaction" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">⚡ Teller & Scan</button>
+      <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto">
+        <button onclick="switchTab('pos')" id="btn-tab-pos" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">🛒 POS Kasir Perdagangan</button>
+        <button onclick="switchTab('transaction')" id="btn-tab-transaction" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">⚡ Teller Bank</button>
+        <button onclick="switchTab('check-balance')" id="btn-tab-check-balance" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🔍 Scan Cek Saldo</button>
         <button onclick="switchTab('digital-card')" id="btn-tab-digital-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">📱 Kartu Digital</button>
-        <button onclick="switchTab('card')" id="btn-tab-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">💳 Cetak PVC</button>
+        <button onclick="switchTab('design')" id="btn-tab-design" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🎨 Editor Desain</button>
         <button onclick="switchTab('students')" id="btn-tab-students" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">👥 Nasabah</button>
-        <button onclick="switchTab('reports')" id="btn-tab-reports" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">📊 Laporan</button>
-        <button onclick="switchTab('design')" id="btn-tab-design" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🎨 Desain</button>
+        <button onclick="switchTab('passbook')" id="btn-tab-passbook" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">📖 Cetak Buku</button>
+        <button onclick="switchTab('card')" id="btn-tab-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">💳 Cetak PVC</button>
       </div>
     </div>
   </header>
 
-  <!-- BOTTOM NAVIGATION MOBILE -->
+  <!-- BOTTOM NAV MOBILE -->
   <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 px-1 py-1.5 pb-safe flex justify-around items-center no-print shadow-lg">
-    <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-emerald-400 bg-emerald-500/10">⚡<span class="mt-1">Teller</span></button>
+    <button onclick="switchTab('pos')" id="btn-mob-pos" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-emerald-400 bg-emerald-500/10">🛒<span class="mt-1">POS Toko</span></button>
+    <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">⚡<span class="mt-1">Teller</span></button>
+    <button onclick="switchTab('check-balance')" id="btn-mob-check-balance" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">🔍<span class="mt-1">Cek Saldo</span></button>
     <button onclick="switchTab('digital-card')" id="btn-mob-digital-card" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">📱<span class="mt-1">Digital</span></button>
     <button onclick="switchTab('students')" id="btn-mob-students" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">👥<span class="mt-1">Nasabah</span></button>
-    <button onclick="switchTab('passbook')" id="btn-mob-passbook" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">📖<span class="mt-1">Buku</span></button>
-    <button onclick="switchTab('card')" id="btn-mob-card" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">💳<span class="mt-1">PVC</span></button>
-    <button onclick="switchTab('reports')" id="btn-mob-reports" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">📊<span class="mt-1">Laporan</span></button>
-    <button onclick="switchTab('design')" id="btn-mob-design" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">🎨<span class="mt-1">Desain</span></button>
   </nav>
 
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
 
-    <!-- TAB 1: PASSBOOK -->
-    <div id="tab-passbook" class="tab-content space-y-6 hidden md:block">
-      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">📖 Cetak Buku Tabungan Fisik Bank</h2>
-            <p class="text-xs text-slate-500">Atur mode pencetakan dan posisi baris awal pada buku tabungan fisik.</p>
+    <!-- TAB: POS KASIR TRANSAKSI PERDAGANGAN (FORM BARANG, SLIP & RIWAYAT) -->
+    <div id="tab-pos" class="tab-content space-y-4 sm:space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        
+        <!-- FORM INPUT BARANG PERDAGANGAN & RINCIAN BELANJA -->
+        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+          
+          <!-- FORM INPUT BARANG -->
+          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="border-b pb-3">
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">📝 Form Transaksi Barang / Perdagangan</h2>
+              <p class="text-xs text-slate-500">Masukkan nama barang, harga satuan, dan jumlah item untuk transaksi toko/kantin.</p>
+            </div>
+
+            <form onsubmit="handlePosAddItem(event)" class="space-y-4 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-1">
+                  <label class="block font-bold text-slate-700 mb-1">Nama Barang / Produk</label>
+                  <input type="text" id="pos-item-name" required placeholder="Contoh: Seragam / Nasi Goreng" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Harga Satuan (Rp)</label>
+                  <input type="number" id="pos-item-price" required min="100" step="100" placeholder="Contoh: 15000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Jumlah (Qty)</label>
+                  <input type="number" id="pos-item-qty" required min="1" value="1" placeholder="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
+                </div>
+              </div>
+              <button type="submit" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs rounded-xl shadow active-scale flex items-center justify-center gap-2">
+                ➕ Tambahkan Barang ke Daftar Transaksi
+              </button>
+            </form>
           </div>
-          <button onclick="triggerPrint()" class="w-full md:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-md transition">🖨️ Cetak Buku Sekarang</button>
+
+          <!-- TABEL DAFTAR RINCIAN TRANSAKSI PERDAGANGAN -->
+          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <h3 class="font-bold text-slate-900 text-sm border-b pb-2 flex justify-between items-center">
+              <span>🛒 Rincian Barang Transaksi</span>
+              <button onclick="clearPosCart()" class="text-xs text-red-500 hover:underline">Reset Form Barang</button>
+            </h3>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
+                    <th class="p-2.5">Nama Barang</th>
+                    <th class="p-2.5 text-center">Harga Satuan</th>
+                    <th class="p-2.5 text-center">Jumlah (Qty)</th>
+                    <th class="p-2.5 text-right">Subtotal</th>
+                    <th class="p-2.5 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="pos-cart-body" class="divide-y divide-slate-100">
+                  <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada barang yang dimasukkan</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="flex justify-between items-center bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-emerald-950 font-bold">
+              <span>TOTAL TRANSAKSI PERDAGANGAN:</span>
+              <span id="pos-cart-total" class="text-xl font-black text-emerald-700">Rp 0</span>
+            </div>
+          </div>
+
+          <!-- FITUR BARU: RIWAYAT TRANSAKSI PERDAGANGAN / KASIR TOKO -->
+          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <span>📋 Riwayat Transaksi Perdagangan & Struk</span>
+              </h3>
+              <span class="text-[10px] text-slate-400">Terupdate otomatis</span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
+                    <th class="p-2.5">Waktu / ID</th>
+                    <th class="p-2.5">Pembayar (Siswa)</th>
+                    <th class="p-2.5">Item Barang</th>
+                    <th class="p-2.5 text-right">Total (Rp)</th>
+                    <th class="p-2.5 text-center">Aksi Slip</th>
+                  </tr>
+                </thead>
+                <tbody id="pos-history-body" class="divide-y divide-slate-100">
+                  <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada riwayat transaksi toko</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Halaman</label>
-            <select id="passbook-view-mode" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="COVER_OUTER">1. Sampul Depan</option>
-              <option value="INSIDE_COVER">2. Sampul Dalam (Identitas)</option>
-              <option value="MUTATION_PAGE" selected>3. Lembar Mutasi</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Media</label>
-            <select id="passbook-print-style" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="FULL_PREVIEW">Lengkap + Bingkai</option>
-              <option value="TEXT_ONLY" selected>Teks Murni (Buku Fisik)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Siswa</label>
-            <select id="passbook-student-select" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800"></select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Mulai Baris</label>
-            <select id="passbook-line-offset" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="1">Baris ke-1</option><option value="2">Baris ke-2</option><option value="3">Baris ke-3</option><option value="4">Baris ke-4</option><option value="5">Baris ke-5</option>
-            </select>
+
+        <!-- PEMBAYARAN VIA SCANNER BARCODE PELAJAR -->
+        <div class="space-y-4">
+          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800 sticky top-20">
+            <div>
+              <h3 class="font-bold text-sm text-white flex items-center gap-1.5">💳 Pemindai Pembayaran Siswa</h3>
+              <p class="text-[10px] text-slate-400 mt-0.5">Scan Barcode / QR Kartu Pelajar untuk memotong saldo tabungan secara otomatis.</p>
+            </div>
+
+            <div class="space-y-2">
+              <button onclick="togglePosCameraScanner()" id="btn-pos-camera-toggle" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow">📷 Buka Kamera Scan Kartu</button>
+              
+              <div id="pos-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
+                <div id="pos-qr-reader" class="w-full"></div>
+              </div>
+
+              <div class="flex gap-2 pt-2">
+                <input type="text" id="pos-scan-input" onkeypress="if(event.key==='Enter') processPosPayment()" placeholder="Scan Barcode / Ketik NIS..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-mono outline-none">
+                <button onclick="processPosPayment()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Bayar</button>
+              </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <label class="block font-bold text-slate-300 text-[11px] mb-1">Atau Pilih Nasabah Siswa:</label>
+              <select id="pos-student-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 font-bold text-xs text-white outline-none"></select>
+            </div>
+
+            <button onclick="processPosPayment()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg active-scale">
+              ⚡ Konfirmasi Bayar Pakai Saldo
+            </button>
           </div>
         </div>
-      </div>
-      <div class="print-container flex justify-center py-2 overflow-x-auto">
-        <div id="passbook-sheet-container" class="shadow-2xl rounded-sm scale-90 sm:scale-100 origin-top"></div>
       </div>
     </div>
 
-    <!-- TAB: DIGITAL CARD -->
+    <!-- TAB 2: TELLER BANK -->
+    <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                  <span>📷 Pemindai Barcode Transaksi</span>
+                  <span id="scan-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SIAP SCAN</span>
+                </h3>
+              </div>
+              <button onclick="toggleCameraScanner()" id="btn-camera-toggle" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 text-xs font-extrabold rounded-xl shadow">📷 Buka Kamera</button>
+            </div>
+
+            <div id="camera-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
+              <div id="qr-reader" class="w-full"></div>
+            </div>
+
+            <div class="flex gap-2">
+              <input type="text" id="scan-input" onkeypress="handleScanKeyPress(event)" placeholder="Scan Barcode Kartu / Ketik NIS / No Rekening..." class="flex-1 bg-slate-800 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-xs text-white font-mono outline-none">
+              <button onclick="handleScanCard()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Proses Scan</button>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm space-y-4">
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Form Transaksi Teller</h2>
+            <form onsubmit="handleTransactionSubmit(event)" class="space-y-4 text-xs">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Jenis Transaksi</label>
+                <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none">
+                  <option value="DEPOSIT">📥 SETOR TUNAI</option>
+                  <option value="WITHDRAWAL">📤 PENARIKAN TUNAI</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Pilih Siswa (Terpilih Otomatis Saat Scan)</label>
+                <select id="tx-student-id" onchange="updateActiveStudentPreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none"></select>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Nominal Transaksi (Rp)</label>
+                <input type="number" id="tx-amount" required min="1000" step="1000" placeholder="Contoh: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-base font-bold text-emerald-700 outline-none">
+              </div>
+              <button type="submit" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg">⚡ Simpan & Eksekusi Transaksi</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
+            <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Informasi Rekening Aktif</h3>
+            <div id="active-student-preview" class="space-y-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SCAN BARCODE CEK SALDO MANDIRI -->
+    <div id="tab-check-balance" class="tab-content space-y-6 hidden no-print">
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6 max-w-2xl mx-auto">
+        <div class="text-center space-y-1">
+          <span class="text-3xl">🔍</span>
+          <h2 class="text-lg font-bold text-slate-900">Scan Barcode / Cek Saldo Mandiri</h2>
+          <p class="text-xs text-slate-500">Scan barcode kartu pelajar atau ketik NIS / No. Rekening untuk mengecek sisa saldo tabungan siswa.</p>
+        </div>
+
+        <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 space-y-4 shadow-inner">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">📷 Pemindai Barcode Kamera</h3>
+            <button onclick="toggleBalanceCamera()" id="btn-balance-cam-toggle" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-bold rounded-xl shadow">Buka Kamera</button>
+          </div>
+
+          <div id="balance-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
+            <div id="balance-qr-reader" class="w-full"></div>
+          </div>
+
+          <div class="flex gap-2">
+            <input type="text" id="balance-query-input" onkeypress="if(event.key==='Enter') executeBalanceCheck()" placeholder="Scan Barcode / Ketik NIS / No. Rekening..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white font-mono focus:border-emerald-500 outline-none">
+            <button onclick="executeBalanceCheck()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow active-scale">Periksa Saldo</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">Atau Pilih Langsung Nama Siswa:</label>
+          <select id="balance-select-student" onchange="executeBalanceCheckSelect()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: EDITOR DESAIN KARTU -->
+    <div id="tab-design" class="tab-content space-y-6 hidden no-print">
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900">🎨 Editor Desain & Branding Kartu ID</h2>
+          <p class="text-xs text-slate-500">Upload logo sekolah, pilih tema warna gradient, dan sesuaikan seluruh teks kartu secara real-time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+          <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h3 class="font-bold text-slate-800 text-sm border-b pb-2">Pengaturan Visual Instansi & Logo</h3>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Upload Logo Sekolah/Bank (JPG/PNG)</label>
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl border border-slate-300 bg-white flex items-center justify-center p-1 overflow-hidden shadow-inner">
+                  <img id="logo-preview-img" src="" class="w-full h-full object-contain hidden">
+                  <span id="logo-preview-placeholder" class="text-xl">🏫</span>
+                </div>
+                <input type="file" id="upload-logo-input" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs bg-white border p-2 rounded-xl flex-1">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Pilih Skema Warna Gradient Kartu</label>
+              <div class="grid grid-cols-4 gap-2">
+                <button onclick="setTheme('theme-green')" class="py-2.5 bg-emerald-800 text-white font-bold rounded-lg text-xs shadow hover:bg-emerald-700">Hijau</button>
+                <button onclick="setTheme('theme-blue')" class="py-2.5 bg-blue-900 text-white font-bold rounded-lg text-xs shadow hover:bg-blue-800">Biru</button>
+                <button onclick="setTheme('theme-maroon')" class="py-2.5 bg-red-950 text-white font-bold rounded-lg text-xs shadow hover:bg-red-900">Marun</button>
+                <button onclick="setTheme('theme-black')" class="py-2.5 bg-slate-950 text-white font-bold rounded-lg text-xs shadow hover:bg-slate-900">Hitam</button>
+              </div>
+            </div>
+            <h3 class="font-bold text-slate-800 text-sm border-b pb-2 pt-2">Teks Kartu & Legalitas Instansi</h3>
+            <div><label class="block font-bold text-slate-700 mb-1">Nama Bank / Program Sekolah</label><input type="text" id="design-bank-name" value="BANK TABUNGAN SEKOLAH" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Nama Sekolah / Lembaga Resmi</label><input type="text" id="design-school-name" value="SD NEGERI HARAPAN BANGSA" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Judul Utama Kartu Depan</label><input type="text" id="design-card-title" value="KARTU TANDA PELAJAR" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Badge Tag Kanan Atas</label><input type="text" id="design-card-tag" value="SMART CARD" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Nama Kepala Sekolah / Penandatangan</label><input type="text" id="design-headmaster" value="Drs. H. Suparna, M.Pd" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Jabatan Penandatangan</label><input type="text" id="design-signatory-title" value="Kepala Sekolah," oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 1)</label><input type="text" id="design-rule-1" value="1. Kartu ini sah sebagai Kartu Pelajar & Tabungan Bank Sekolah." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 2)</label><input type="text" id="design-rule-2" value="2. Harap dikembalikan ke pihak sekolah jika ditemukan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 3)</label><input type="text" id="design-rule-3" value="3. Dilarang menyalahgunakan kartu untuk transaksi di luar ketentuan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+          </div>
+
+          <div>
+            <h3 class="font-bold text-slate-800 text-sm mb-2">Pratinjau Live Sampul Buku Tabungan</h3>
+            <div id="design-preview-box" class="passbook-bank-sheet theme-green rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-white/20 scale-90 origin-top">
+              <div class="flex justify-between items-start border-b border-white/30 pb-3">
+                <div class="flex items-center gap-3">
+                  <div id="preview-logo-container" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center p-1">🏫</div>
+                  <div>
+                    <h1 class="font-bank-title text-xl font-extrabold" id="preview-bank-name">BANK TABUNGAN SEKOLAH</h1>
+                    <p class="text-[9px] uppercase tracking-wider" id="preview-school-name">SD NEGERI HARAPAN BANGSA</p>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center my-auto">
+                <h2 class="font-bank-title text-2xl font-black tracking-widest uppercase">BUKU TABUNGAN</h2>
+                <p class="text-[10px] opacity-80 mt-1">SIMPANAN PELAJAR SMART BANKING</p>
+              </div>
+              <div class="border-t border-white/30 pt-3 text-xs font-mono flex justify-between">
+                <div><p class="text-[9px] opacity-75">NAMA NASABAH:</p><p class="font-bold uppercase">AHMAD RAIHAN</p></div>
+                <div class="text-right"><p class="text-[9px] opacity-75">NO. REKENING:</p><p class="font-bold">5080-01-002341-53-8</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: KARTU DIGITAL -->
     <div id="tab-digital-card" class="tab-content space-y-6 hidden">
       <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-slate-900">📱 Kartu Pelajar & Tabungan Digital</h2>
-            <p class="text-xs text-slate-500">Barcode telah diperkuat dengan quiet-zone agar mudah dipindai scanner.</p>
+            <p class="text-xs text-slate-500">Kartu digital interaktif lengkap dengan logo, foto profil, dan barcode siap unduh.</p>
           </div>
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <button onclick="downloadDigitalCardImage()" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow transition">💾 Unduh PNG</button>
-            <button onclick="openWhatsAppModal(document.getElementById('digital-student-select').value)" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow transition">💬 Kirim WA</button>
-          </div>
+          <button onclick="downloadDigitalCardImage()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+            💾 Unduh Kartu PNG
+          </button>
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Siswa</label>
-          <select id="digital-student-select" onchange="renderDigitalCard()" class="max-w-md w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800"></select>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
+          <select id="digital-student-select" onchange="renderDigitalCard()" class="max-w-md w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
         </div>
       </div>
       <div class="flex justify-center py-4">
@@ -186,115 +429,36 @@
       </div>
     </div>
 
-    <!-- TAB 2: TELLER & SCANNER -->
-    <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-md space-y-3 sm:space-y-4">
-            <div class="flex items-center justify-between">
-              <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">💳 Barcode / Tap ID Card Siswa</h3>
-              <button onclick="toggleCameraScanner()" id="btn-camera-toggle" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow transition">📷 Kamera Belakang</button>
-            </div>
-            
-            <!-- Area Kamera -->
-            <div id="camera-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
-              <div id="qr-reader" class="w-full"></div>
-              <p class="text-[10px] text-center text-slate-300 py-1.5 bg-slate-950 font-mono">Arahkan barcode kartu ke kamera (pastikan pencahayaan cukup)</p>
-            </div>
-
-            <div class="flex gap-2">
-              <input type="text" id="scan-input" onkeypress="handleScanKeyPress(event)" placeholder="Scan Barcode / No. Rekening / NIS Siswa..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
-              <button onclick="handleScanCard()" class="px-4 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow">Scan / Tap</button>
-            </div>
-            <p class="text-[10px] text-slate-400">Tips: Jauhkan kartu sekitar 15-20 cm dari kamera agar lensa otomatis fokus pada garis barcode.</p>
-          </div>
-
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm space-y-4">
-            <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex justify-between items-center">
-              <span>Form Transaksi Tabungan Teller</span>
-              <span class="text-xs text-slate-400 font-normal">Teller: <strong>TLR01</strong></span>
-            </h2>
-            <form onsubmit="handleTransactionSubmit(event)" class="space-y-4 text-xs">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Jenis Transaksi</label>
-                <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-                  <option value="DEPOSIT">📥 SETOR TUNAI (DEPOSIT)</option>
-                  <option value="WITHDRAWAL">📤 PENARIKAN TUNAI (WITHDRAWAL)</option>
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Siswa Terpilih</label>
-                <select id="tx-student-id" onchange="updateActiveStudentPreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800"></select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Nominal (Rp)</label>
-                <input type="number" id="tx-amount" required min="1000" step="1000" placeholder="Contoh: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-base font-bold text-emerald-700">
-                <div class="flex flex-wrap gap-1.5 mt-2.5">
-                  <button type="button" onclick="setQuickAmount(10000)" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold flex-1">+10rb</button>
-                  <button type="button" onclick="setQuickAmount(20000)" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold flex-1">+20rb</button>
-                  <button type="button" onclick="setQuickAmount(50000)" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold flex-1">+50rb</button>
-                  <button type="button" onclick="setQuickAmount(100000)" class="px-3 py-2 bg-slate-100 rounded-xl text-xs font-bold flex-1">+100rb</button>
-                </div>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Keterangan</label>
-                <input type="text" id="tx-notes" placeholder="Catatan transaksi..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
-              </div>
-              <button type="submit" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg">⚡ Proses Transaksi</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="space-y-4 sm:space-y-6">
-          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
-            <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Rekening Aktif</h3>
-            <div id="active-student-preview" class="space-y-3"></div>
-          </div>
-          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
-            <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Mutasi Terakhir</h3>
-            <div id="recent-transactions-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: PVC ID CARD -->
-    <div id="tab-card" class="tab-content space-y-6 hidden">
-      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">💳 Cetak Kartu Pelajar PVC (CR-80)</h2>
-            <p class="text-xs text-slate-500">Pratinjau fisik kartu dengan barcode optik standar industri.</p>
-          </div>
-          <button onclick="triggerPrint()" class="w-full sm:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow-md">🖨️ Cetak Kartu</button>
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Siswa</label>
-          <select id="card-student-select" onchange="renderIDCard()" class="max-w-xs w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800"></select>
-        </div>
-      </div>
-      <div class="flex flex-col md:flex-row justify-center items-center gap-6 sm:gap-8 py-4">
-        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">DEPAN</p><div id="card-front-container" class="shadow-2xl rounded-xl"></div></div>
-        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">BELAKANG</p><div id="card-back-container" class="shadow-2xl rounded-xl"></div></div>
-      </div>
-    </div>
-
-    <!-- TAB 4: STUDENTS -->
+    <!-- TAB 6: DATA NASABAH -->
     <div id="tab-students" class="tab-content space-y-4 hidden">
       <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div><h2 class="text-base sm:text-lg font-bold text-slate-900">Data Nasabah Siswa</h2><p class="text-xs text-slate-500">Daftar lengkap seluruh siswa.</p></div>
-          <button onclick="openModalNewStudent()" class="px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold text-xs rounded-xl shadow">➕ Buka Rekening</button>
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">Data Nasabah Siswa & Rekening</h2>
+            <p class="text-xs text-slate-500">Kelola data nasabah, edit profil, cetak kartu, atau hapus rekening nasabah.</p>
+          </div>
+          <button onclick="openModalNewStudent()" class="w-full sm:w-auto px-4 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
+            ➕ Buka Rekening Baru
+          </button>
         </div>
+
         <div class="flex flex-col sm:flex-row gap-3 text-xs">
-          <input type="text" id="search-student-input" placeholder="🔍 Cari Nama/NIS/Rekening..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs">
-          <select id="filter-class-select" onchange="currentPage=1; renderStudentsTable();" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 text-xs"><option value="ALL">Semua Kelas</option></select>
+          <input type="text" id="search-student-input" onkeyup="renderStudentsTable()" placeholder="🔍 Cari Nama, NIS, atau No. Rekening..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-emerald-500">
+          <select id="filter-class-select" onchange="renderStudentsTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 text-xs">
+            <option value="ALL">Semua Kelas</option>
+          </select>
         </div>
+
         <div class="overflow-x-auto rounded-xl border border-slate-100">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500">
-                <th class="p-3">Foto</th><th class="p-3">No. Rek & NIS</th><th class="p-3">Nama Siswa</th><th class="p-3">Kelas</th><th class="p-3">Saldo</th><th class="p-3 text-center">Aksi</th>
+              <tr class="bg-slate-50 text-[10px] sm:text-[11px] uppercase font-bold text-slate-500 tracking-wider">
+                <th class="p-3">Foto</th>
+                <th class="p-3">No. Rekening & NIS</th>
+                <th class="p-3">Nama Lengkap Siswa</th>
+                <th class="p-3">Kelas Custom</th>
+                <th class="p-3">Total Tabungan</th>
+                <th class="p-3 text-center">Aksi Operasional</th>
               </tr>
             </thead>
             <tbody id="student-table-body" class="divide-y divide-slate-100 text-xs"></tbody>
@@ -303,174 +467,196 @@
       </div>
     </div>
 
-    <!-- TAB 5: REPORTS -->
-    <div id="tab-reports" class="tab-content space-y-4 hidden no-print">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div class="flex justify-between items-center">
-          <h2 class="text-base font-bold text-slate-900">📊 Laporan Keuangan</h2>
-          <div class="flex gap-2">
-            <button onclick="exportToCSV('students')" class="px-3.5 py-2.5 bg-slate-100 text-slate-800 font-bold text-xs rounded-xl border">📥 Ekspor Nasabah</button>
-            <button onclick="exportToCSV('transactions')" class="px-3.5 py-2.5 bg-emerald-500 text-slate-900 font-extrabold text-xs rounded-xl">📥 Ekspor Mutasi</button>
+    <!-- TAB 7: CETAK BUKU TABUNGAN -->
+    <div id="tab-passbook" class="tab-content space-y-6 hidden">
+      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">📖 Cetak Buku Tabungan Fisik</h2>
+            <p class="text-xs text-slate-500">Pilih lembar identitas, sampul depan, atau mutasi transaksi dengan kontrol baris offset.</p>
+          </div>
+          <button onclick="triggerPrint()" class="w-full md:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow flex items-center justify-center gap-2">
+            🖨️ Cetak Buku Tabungan
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Halaman Cetak</label>
+            <select id="passbook-view-mode" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+              <option value="MUTATION_PAGE" selected>3. Lembar Mutasi Transaksi</option>
+              <option value="INSIDE_COVER">2. Sampul Dalam (Identitas Siswa)</option>
+              <option value="COVER_OUTER">1. Sampul Luar (Cover Buku)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Target Media Printer</label>
+            <select id="passbook-print-style" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+              <option value="TEXT_ONLY" selected>Teks Murni (Cetak di Buku Fisik)</option>
+              <option value="FULL_PREVIEW">Lengkap Warna + Garis Tabel</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Pilih Nasabah Siswa</label>
+            <select id="passbook-student-select" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800"></select>
+          </div>
+
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Mulai Baris Cetak (Offset)</label>
+            <select id="passbook-line-offset" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+              <option value="1">Baris ke-1 (Paling Atas)</option>
+              <option value="2">Baris ke-2</option><option value="3">Baris ke-3</option><option value="4">Baris ke-4</option><option value="5">Baris ke-5</option>
+              <option value="6">Baris ke-6</option><option value="7">Baris ke-7</option><option value="8">Baris ke-8</option><option value="9">Baris ke-9</option>
+              <option value="10">Baris ke-10</option><option value="11">Baris ke-11</option><option value="12">Baris ke-12</option>
+            </select>
           </div>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <div class="bg-emerald-900 text-white p-4 rounded-xl"><p class="text-[10px] text-emerald-300 font-bold uppercase">Total Kas</p><p id="report-total-kas" class="text-xl font-black mt-1">Rp 0</p></div>
-          <div class="bg-slate-900 text-white p-4 rounded-xl"><p class="text-[10px] text-slate-400 font-bold uppercase">Total Siswa</p><p id="report-total-nasabah" class="text-xl font-black mt-1">0</p></div>
-          <div class="bg-blue-900 text-white p-4 rounded-xl"><p class="text-[10px] text-blue-300 font-bold uppercase">Setoran</p><p id="report-total-setor" class="text-xl font-black mt-1">Rp 0</p></div>
-          <div class="bg-amber-950 text-white p-4 rounded-xl"><p class="text-[10px] text-amber-300 font-bold uppercase">Penarikan</p><p id="report-total-tarik" class="text-xl font-black mt-1">Rp 0</p></div>
-        </div>
+      </div>
+
+      <div class="print-container flex justify-center py-2 overflow-x-auto">
+        <div id="passbook-sheet-container" class="shadow-2xl rounded-sm scale-90 sm:scale-100 origin-top"></div>
       </div>
     </div>
 
-    <!-- TAB 6: DESIGN -->
-    <div id="tab-design" class="tab-content space-y-6 hidden no-print">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <h2 class="text-base font-bold text-slate-900">🎨 Editor Desain & Logo Lembaga</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <div class="space-y-4 bg-slate-50 p-4 rounded-xl border">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Logo Lembaga (JPG/PNG)</label>
-              <input type="file" id="upload-logo-input" accept="image/*" onchange="handleLogoUpload(event)" class="w-full text-xs bg-white border p-2 rounded-xl">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Tema Warna</label>
-              <div class="grid grid-cols-4 gap-2">
-                <button onclick="setTheme('theme-green')" class="py-2 bg-emerald-800 text-amber-300 font-bold rounded">Hijau</button>
-                <button onclick="setTheme('theme-blue')" class="py-2 bg-blue-900 text-blue-200 font-bold rounded">Biru</button>
-                <button onclick="setTheme('theme-maroon')" class="py-2 bg-red-950 text-yellow-200 font-bold rounded">Marun</button>
-                <button onclick="setTheme('theme-black')" class="py-2 bg-slate-950 text-amber-400 font-bold rounded">Hitam</button>
-              </div>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Nama Bank Sekolah</label>
-              <input type="text" id="design-bank-name" value="BANK TABUNGAN SEKOLAH" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold">
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Nama Instansi</label>
-              <input type="text" id="design-school-name" value="SD NEGERI HARAPAN BANGSA" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold">
-            </div>
-          </div>
+    <!-- TAB 8: KARTU PVC -->
+    <div id="tab-card" class="tab-content space-y-6 hidden">
+      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
           <div>
-            <h3 class="font-bold text-slate-800 text-sm mb-2">Pratinjau Sampul</h3>
-            <div id="design-preview-box" class="passbook-bank-sheet theme-green rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-amber-400/30 scale-90 origin-top">
-              <div class="flex justify-between items-start border-b-2 border-amber-400/40 pb-3">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center p-1">🏫</div>
-                  <div>
-                    <h1 class="font-bank-title text-xl font-extrabold" id="preview-bank-name">BANK TABUNGAN SEKOLAH</h1>
-                    <p class="text-[9px] uppercase" id="preview-school-name">SD NEGERI HARAPAN BANGSA</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">💳 Cetak Kartu Pelajar PVC (CR-80)</h2>
+            <p class="text-xs text-slate-500">Pratinjau fisik kartu PVC depan dan belakang.</p>
           </div>
+          <button onclick="triggerPrint()" class="w-full sm:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow">🖨️ Cetak Kartu Fisik</button>
         </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
+          <select id="card-student-select" onchange="renderIDCard()" class="max-w-xs w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800"></select>
+        </div>
+      </div>
+      <div class="flex flex-col md:flex-row justify-center items-center gap-6 sm:gap-8 py-4">
+        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN DEPAN</p><div id="card-front-container" class="shadow-2xl rounded-xl"></div></div>
+        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN BELAKANG</p><div id="card-back-container" class="shadow-2xl rounded-xl"></div></div>
       </div>
     </div>
 
   </main>
 
-  <!-- MODAL RECEIPT -->
-  <div id="modal-receipt" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4">
-      <button onclick="closeModalReceipt()" class="absolute right-4 top-4 font-bold">✕</button>
-      <h3 class="text-base font-bold text-center">Transaksi Berhasil!</h3>
-      <div id="receipt-print-area" class="border border-dashed p-3 bg-amber-50/20 font-mono text-[11px] space-y-2"></div>
-      <button onclick="closeModalReceipt()" class="w-full py-2.5 bg-slate-100 font-bold rounded-xl">Tutup</button>
+  <!-- MODAL POP-UP KHUSUS CEK SALDO MANDIRI -->
+  <div id="modal-balance-result" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-xs space-y-4 border border-emerald-500/30">
+      <button onclick="closeModalBalanceResult()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
+
+      <div class="text-center space-y-1 border-b pb-3">
+        <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px]">REKENING SISWA AKTIF</span>
+        <h3 class="text-base font-extrabold text-slate-900" id="res-student-name">Ahmad Raihan</h3>
+        <p class="text-[11px] font-mono text-slate-500" id="res-student-nis">NIS: 2023001</p>
+      </div>
+
+      <div class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-2xl p-5 shadow-inner text-center space-y-1">
+        <p class="text-[10px] text-emerald-300 font-semibold uppercase tracking-wider">Total Saldo Tabungan</p>
+        <h4 class="text-2xl font-black text-amber-300 font-mono" id="res-student-balance">Rp 0</h4>
+        <p class="text-[9px] text-slate-400 font-mono" id="res-student-account">5080-01-002341-53-8</p>
+      </div>
+
+      <div class="space-y-2">
+        <h4 class="font-bold text-slate-700 text-[11px] flex justify-between">
+          <span>Riwayat 3 Transaksi Terakhir</span>
+          <span class="text-slate-400 text-[9px]" id="res-student-class">Kelas 4 A</span>
+        </h4>
+        <div id="res-tx-history" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
+      </div>
+
+      <button onclick="closeModalBalanceResult()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-md">Tutup Informational</button>
     </div>
   </div>
 
-  <!-- MODAL WHATSAPP -->
-  <div id="modal-whatsapp" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative text-xs space-y-4">
-      <button onclick="closeWhatsAppModal()" class="absolute right-4 top-4 font-bold">✕</button>
-      <h3 class="text-base font-bold">💬 Kirim ke WhatsApp</h3>
-      <input type="text" id="wa-phone-input" placeholder="081234567890" class="w-full bg-slate-50 border p-3 font-mono text-xs rounded-xl">
-      <div id="wa-image-preview-container" class="border rounded-xl p-2 bg-slate-50 flex justify-center items-center min-h-[160px]"></div>
-      <button onclick="sendWhatsAppMessage()" class="w-full py-3 bg-emerald-600 text-white font-extrabold rounded-xl shadow">Kirim WhatsApp</button>
-    </div>
-  </div>
-
-  <!-- MODAL NEW STUDENT -->
+  <!-- MODAL EDIT / REKENING BARU SISWA -->
   <div id="modal-new-student" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative max-h-[90vh] overflow-y-auto text-xs space-y-4">
-      <button onclick="closeModalNewStudent()" class="absolute right-4 top-4 font-bold">✕</button>
-      <h3 id="modal-student-title" class="text-base font-bold">Buka Rekening Siswa</h3>
+      <button onclick="closeModalNewStudent()" class="absolute right-4 top-4 font-bold text-base">✕</button>
+      <h3 id="modal-student-title" class="text-base font-bold text-slate-900">Buka Rekening & Upload Foto Siswa</h3>
+      
       <form onsubmit="handleNewStudentSubmit(event)" class="space-y-3">
-        <input type="hidden" id="edit-student-id">
+        <input type="hidden" id="edit-student-id" value="">
         <div>
-          <label class="block font-bold mb-1">Foto (JPG/PNG)</label>
-          <input type="file" id="upload-photo-input" accept="image/*" onchange="handleFileChange(event)" class="w-full text-xs bg-slate-50 border p-2 rounded-xl">
+          <label class="block font-bold text-slate-700 mb-1">Foto Siswa (JPG/PNG)</label>
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-20 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden shadow-inner flex-shrink-0">
+              <img id="upload-preview-img" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 space-y-1">
+              <input type="file" id="upload-photo-input" accept="image/*" onchange="handleFileChange(event)" class="w-full text-xs bg-slate-50 border p-2 rounded-xl">
+            </div>
+          </div>
         </div>
-        <div><label class="block font-bold mb-1">NIS</label><input type="text" id="new-nis" required class="w-full bg-slate-50 border p-3 rounded-xl font-mono"></div>
-        <div><label class="block font-bold mb-1">Nama Lengkap</label><input type="text" id="new-name" required class="w-full bg-slate-50 border p-3 rounded-xl"></div>
-        <div><label class="block font-bold mb-1">Kelas</label><input type="text" id="new-class" required class="w-full bg-slate-50 border p-3 rounded-xl font-bold"></div>
-        <div><label class="block font-bold mb-1">No. WhatsApp</label><input type="text" id="new-phone" class="w-full bg-slate-50 border p-3 rounded-xl font-mono"></div>
-        <div id="initial-balance-container"><label class="block font-bold mb-1">Setoran Awal</label><input type="number" id="new-initial-balance" value="50000" class="w-full bg-slate-50 border p-3 rounded-xl font-bold text-emerald-600"></div>
-        <button type="submit" class="w-full py-3 bg-emerald-500 font-extrabold rounded-xl">Simpan Nasabah</button>
+        <div><label class="block font-bold text-slate-700 mb-1">NIS</label><input type="text" id="new-nis" required placeholder="Contoh: 2023001" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono text-xs"></div>
+        <div><label class="block font-bold text-slate-700 mb-1">Nama Lengkap Siswa</label><input type="text" id="new-name" required placeholder="Contoh: Ahmad Raihan" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs"></div>
+        <div class="grid grid-cols-2 gap-2">
+          <div><label class="block font-bold text-slate-700 mb-1">Kelas Custom</label><input type="text" id="new-class" required placeholder="Contoh: Kelas 4 A" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-emerald-700 text-xs"></div>
+          <div><label class="block font-bold text-slate-700 mb-1">No. WhatsApp</label><input type="text" id="new-phone" placeholder="081234567890" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono text-xs"></div>
+        </div>
+        <div id="initial-balance-container"><label class="block font-bold text-slate-700 mb-1">Setoran Awal (Rp)</label><input type="number" id="new-initial-balance" value="50000" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-emerald-600 text-xs"></div>
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModalNewStudent()" class="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 text-xs">Batal</button>
+          <button type="submit" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold rounded-xl shadow text-xs">Simpan Data Nasabah</button>
+        </div>
       </form>
     </div>
   </div>
 
-  <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl text-xs space-y-4 text-center">
-      <h3 id="confirm-title" class="text-base font-bold">Konfirmasi</h3>
-      <p id="confirm-message" class="text-slate-500">Yakin ingin melanjutkan?</p>
-      <div class="flex gap-2"><button id="btn-confirm-cancel" class="flex-1 py-2 bg-slate-100 rounded-xl font-bold">Batal</button><button id="btn-confirm-ok" class="flex-1 py-2 bg-red-600 text-white rounded-xl font-bold">Hapus</button></div>
+  <!-- MODAL FITUR BARU: SLIP STRUK NOTA BELANJA PERDAGANGAN -->
+  <div id="modal-pos-receipt" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4 no-print border border-slate-300">
+      <button onclick="closeModalPosReceipt()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
+
+      <div class="text-center pb-2 border-b">
+        <h3 class="text-sm font-extrabold text-slate-900">🧾 Struk Transaksi Perdagangan</h3>
+        <p class="text-[10px] text-slate-500">Pratinjau Slip Nota Belanja Kasir Toko/Kantin</p>
+      </div>
+
+      <!-- KERTAS STRUK THERMAL METODE PRATINJAU -->
+      <div id="receipt-print-area" class="receipt-paper shadow-inner rounded space-y-2">
+        <!-- RENDER STRUK THERMAL VIA JAVASCRIPT -->
+      </div>
+
+      <div class="flex gap-2 pt-2 no-print">
+        <button onclick="closeModalPosReceipt()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 text-xs">Tutup</button>
+        <button onclick="triggerPrint()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold rounded-xl shadow text-xs">🖨️ Cetak Struk</button>
+      </div>
     </div>
   </div>
 
   <canvas id="receipt-canvas" class="hidden"></canvas>
   <div id="toast-container" class="fixed bottom-16 sm:bottom-5 right-3 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
-  <!-- JAVASCRIPT UTAMA -->
+  <!-- JAVASCRIPT ENGINE LENGKAP -->
   <script>
-    // --- OPTIMIZED BARCODE GENERATOR (DENGAN QUIET-ZONE AMAN & TEBAL OPTIMAL) ---
     function generateBarcodeSVG(text) {
-      const cleanText = String(text || '').trim();
+      const cleanText = String(text || '000000').trim();
       const bars = [];
-      // Pengkodean pola garis standar agar kontras tinggi & mudah dibaca kamera
-      bars.push(3, 1, 3, 1, 1, 1); // Start marker
+      bars.push(3, 1, 3, 1, 1, 1);
       for (let i = 0; i < cleanText.length; i++) {
         const code = cleanText.charCodeAt(i);
         bars.push((code % 3) + 2, 1, (code % 2) + 1, 2);
       }
-      bars.push(1, 1, 3, 3, 1); // Stop marker
+      bars.push(1, 1, 3, 3, 1);
 
-      let x = 15; // Quiet-zone awal (Margin putih wajib agar scanner langsung mengunci)
+      let x = 15;
       let rects = `<rect width="100%" height="100%" fill="#ffffff"/>`;
       bars.forEach((width, index) => {
         const color = index % 2 === 0 ? '#000000' : '#ffffff';
         rects += `<rect x="${x}" y="5" width="${width * 1.5}" height="45" fill="${color}" />`;
         x += width * 1.5;
       });
-      x += 15; // Quiet-zone akhir
+      x += 15;
 
       return `<svg viewBox="0 0 ${x} 55" class="w-full h-10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#ffffff"/>${rects}</svg>`;
     }
 
-    function toggleFullScreen() {
-      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-      else document.exitFullscreen?.();
-    }
-
     let audioEnabled = true;
-    function toggleAudio() { audioEnabled = !audioEnabled; showToast(`Audio: ${audioEnabled ? 'ON' : 'OFF'}`); }
-
-    function playSound(type) {
-      if (!audioEnabled) return;
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        if (type === 'scan') { osc.frequency.setValueAtTime(1800, ctx.currentTime); gain.gain.setValueAtTime(0.1, ctx.currentTime); }
-        else if (type === 'success') { osc.frequency.setValueAtTime(523, ctx.currentTime); gain.gain.setValueAtTime(0.15, ctx.currentTime); }
-        else { osc.frequency.setValueAtTime(150, ctx.currentTime); gain.gain.setValueAtTime(0.2, ctx.currentTime); }
-        osc.start(); osc.stop(ctx.currentTime + 0.1);
-      } catch(e) {}
-    }
-
+    function toggleAudio() { audioEnabled = !audioEnabled; showToast(`Efek Suara: ${audioEnabled ? 'ON' : 'OFF'}`); }
     function formatRupiah(num) { return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num || 0); }
 
     function showToast(msg, type = 'success') {
@@ -482,22 +668,15 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
-    function showConfirmModal(title, msg, onOk) {
-      const modal = document.getElementById('modal-confirm');
-      document.getElementById('confirm-title').innerText = title;
-      document.getElementById('confirm-message').innerText = msg;
-      modal.classList.remove('hidden');
-      document.getElementById('btn-confirm-cancel').onclick = () => modal.classList.add('hidden');
-      document.getElementById('btn-confirm-ok').onclick = () => { modal.classList.add('hidden'); onOk(); };
-    }
-
     let currentTheme = 'theme-green';
     let institutionLogoBase64 = '';
     let tempPhotoBase64 = '';
     let html5QrCodeScanner = null;
+    let balanceQrScanner = null;
+    let posQrScanner = null;
     let isCameraActive = false;
-    let currentPage = 1;
-    const itemsPerPage = 15;
+    let isBalanceCameraActive = false;
+    let isPosCameraActive = false;
 
     let designConfig = {
       bankName: 'BANK TABUNGAN SEKOLAH',
@@ -506,166 +685,380 @@
       cardTitle: 'KARTU TANDA PELAJAR',
       cardTag: 'SMART CARD',
       signatoryTitle: 'Kepala Sekolah,',
-      rule1: '1. Kartu ini sah sebagai Kartu Pelajar & Tabungan.',
-      rule2: '2. Harap dikembalikan ke sekolah jika ditemukan.',
-      rule3: '3. Dilarang menyalahgunakan kartu ini.'
+      rule1: '1. Kartu ini sah sebagai Kartu Pelajar & Tabungan Bank Sekolah.',
+      rule2: '2. Apabila menemukan kartu ini, harap mengembalikan ke pihak sekolah.',
+      rule3: '3. Dilarang menyalahgunakan kartu untuk transaksi di luar ketentuan.'
     };
 
+    let posCart = [];
+    let posHistory = [];
+
     let students = [
-      { id: 'SIS001', nis: '2023001', accountNo: '5080-01-002341-53-8', name: 'Ahmad Raihan', class: 'Kelas 4 A', address: 'Jl. Melati No. 12', parentName: 'Budi', phone: '081234567890', avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80', balance: 450000, status: 'AKTIF' }
+      { id: 'SIS001', nis: '2023001', accountNo: '5080-01-002341-53-8', name: 'Ahmad Raihan', class: 'Kelas 4 A-Unggulan', address: 'Jl. Melati No. 12', parentName: 'Budi Santoso', phone: '081234567890', avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80', balance: 450000, status: 'AKTIF' }
     ];
     let transactions = [
-      { id: 'TRX-1001', date: '01/08/26', time: '08:00', studentId: 'SIS001', code: 'KM', type: 'DEPOSIT', amount: 200000, runningBalance: 200000, teller: 'TLR01', notes: 'Setoran' }
+      { id: 'TRX-1001', date: '01/08/26', time: '08:00', studentId: 'SIS001', code: 'KM', type: 'DEPOSIT', amount: 200000, runningBalance: 200000, teller: 'TLR01', notes: 'Setoran Awal' },
+      { id: 'TRX-1002', date: '05/08/26', time: '09:15', studentId: 'SIS001', code: 'KM', type: 'DEPOSIT', amount: 250000, runningBalance: 450000, teller: 'TLR01', notes: 'Setoran Mingguan' }
     ];
 
     function loadStorage() {
-      if (localStorage.getItem('tb_students')) students = JSON.parse(localStorage.getItem('tb_students'));
-      if (localStorage.getItem('tb_tx')) transactions = JSON.parse(localStorage.getItem('tb_tx'));
+      if (localStorage.getItem('tabungku_students')) students = JSON.parse(localStorage.getItem('tabungku_students'));
+      if (localStorage.getItem('tabungku_tx')) transactions = JSON.parse(localStorage.getItem('tabungku_tx'));
+      if (localStorage.getItem('tabungku_pos_history')) posHistory = JSON.parse(localStorage.getItem('tabungku_pos_history'));
+      if (localStorage.getItem('tabungku_logo')) { institutionLogoBase64 = localStorage.getItem('tabungku_logo'); applyHeaderLogo(institutionLogoBase64); }
+      if (localStorage.getItem('tabungku_theme')) currentTheme = localStorage.getItem('tabungku_theme');
+      if (localStorage.getItem('tabungku_design')) designConfig = Object.assign(designConfig, JSON.parse(localStorage.getItem('tabungku_design')));
+
+      document.getElementById('design-bank-name').value = designConfig.bankName;
+      document.getElementById('design-school-name').value = designConfig.schoolName;
+      document.getElementById('design-headmaster').value = designConfig.headmaster;
+      document.getElementById('design-card-title').value = designConfig.cardTitle || 'KARTU TANDA PELAJAR';
+      document.getElementById('design-card-tag').value = designConfig.cardTag || 'SMART CARD';
+      document.getElementById('design-signatory-title').value = designConfig.signatoryTitle || 'Kepala Sekolah,';
+      document.getElementById('design-rule-1').value = designConfig.rule1;
+      document.getElementById('design-rule-2').value = designConfig.rule2;
+      document.getElementById('design-rule-3').value = designConfig.rule3;
     }
+
     function saveStorage() {
-      localStorage.setItem('tb_students', JSON.stringify(students));
-      localStorage.setItem('tb_tx', JSON.stringify(transactions));
+      localStorage.setItem('tabungku_students', JSON.stringify(students));
+      localStorage.setItem('tabungku_tx', JSON.stringify(transactions));
+      localStorage.setItem('tabungku_pos_history', JSON.stringify(posHistory));
+      localStorage.setItem('tabungku_logo', institutionLogoBase64);
+      localStorage.setItem('tabungku_theme', currentTheme);
+      localStorage.setItem('tabungku_design', JSON.stringify(designConfig));
+    }
+
+    function applyHeaderLogo(base64) {
+      const imgHeader = document.getElementById('header-logo-img');
+      const placeholderHeader = document.getElementById('header-logo-placeholder');
+      const imgPreview = document.getElementById('logo-preview-img');
+      const placeholderPreview = document.getElementById('logo-preview-placeholder');
+
+      if (base64) {
+        if (imgHeader) { imgHeader.src = base64; imgHeader.classList.remove('hidden'); }
+        if (placeholderHeader) placeholderHeader.classList.add('hidden');
+        if (imgPreview) { imgPreview.src = base64; imgPreview.classList.remove('hidden'); }
+        if (placeholderPreview) placeholderPreview.classList.add('hidden');
+        const pLogo = document.getElementById('preview-logo-container');
+        if (pLogo) pLogo.innerHTML = `<img src="${base64}" class="w-full h-full object-contain">`;
+      }
+    }
+
+    function setTheme(themeName) {
+      currentTheme = themeName;
+      const previewBox = document.getElementById('design-preview-box');
+      if (previewBox) previewBox.className = `passbook-bank-sheet ${currentTheme} rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-white/20 scale-90 origin-top`;
+      saveStorage(); renderDigitalCard(); renderIDCard(); renderPassbook();
+    }
+
+    function updateDesignSettings() {
+      designConfig.bankName = document.getElementById('design-bank-name').value || 'BANK TABUNGAN SEKOLAH';
+      designConfig.schoolName = document.getElementById('design-school-name').value || 'SD NEGERI HARAPAN BANGSA';
+      designConfig.headmaster = document.getElementById('design-headmaster').value || 'Drs. H. Suparna, M.Pd';
+      designConfig.cardTitle = document.getElementById('design-card-title').value || 'KARTU TANDA PELAJAR';
+      designConfig.cardTag = document.getElementById('design-card-tag').value || 'SMART CARD';
+      designConfig.signatoryTitle = document.getElementById('design-signatory-title').value || 'Kepala Sekolah,';
+      designConfig.rule1 = document.getElementById('design-rule-1').value;
+      designConfig.rule2 = document.getElementById('design-rule-2').value;
+      designConfig.rule3 = document.getElementById('design-rule-3').value;
+
+      document.getElementById('preview-bank-name').innerText = designConfig.bankName;
+      document.getElementById('preview-school-name').innerText = designConfig.schoolName;
+
+      saveStorage(); renderDigitalCard(); renderIDCard(); renderPassbook();
     }
 
     function switchTab(tab) {
       if (isCameraActive && tab !== 'transaction') stopCameraScanner();
+      if (isBalanceCameraActive && tab !== 'check-balance') stopBalanceCamera();
+      if (isPosCameraActive && tab !== 'pos') stopPosCameraScanner();
+
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('bg-emerald-500/10', 'text-emerald-400', 'border'));
+      document.querySelectorAll('.mob-nav-tab').forEach(el => el.classList.remove('text-emerald-400', 'bg-emerald-500/10'));
+
+      const targetTab = document.getElementById(`tab-${tab}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`btn-tab-${tab}`);
+      if (activeBtn) activeBtn.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border');
+
+      if (tab === 'pos') { updatePosStudentDropdown(); renderPosCart(); renderPosHistory(); }
+      if (tab === 'check-balance') populateBalanceSelect();
       if (tab === 'passbook') renderPassbook();
       if (tab === 'digital-card') renderDigitalCard();
-      if (tab === 'card') renderIDCard();
       if (tab === 'students') renderStudentsTable();
+      if (tab === 'card') renderIDCard();
       if (tab === 'transaction') updateTransactionDropdowns();
     }
+
     function triggerPrint() { window.print(); }
 
-    /* --- DIGITAL CARD & DOWNLOAD FIX --- */
-    function renderDigitalCard() {
-      const select = document.getElementById('digital-student-select');
-      const active = students.filter(s => s.status !== 'DIHAPUS');
-      if (select.options.length !== active.length) {
-        select.innerHTML = active.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
-      }
-      const student = active.find(s => s.id === select.value) || active[0];
-      if (!student) return;
+    /* FUNGSI KASIR PERDAGANGAN (FORM BARANG, SLIP & RIWAYAT) */
+    function handlePosAddItem(e) {
+      e.preventDefault();
+      const name = document.getElementById('pos-item-name').value.trim();
+      const price = parseFloat(document.getElementById('pos-item-price').value);
+      const qty = parseInt(document.getElementById('pos-item-qty').value) || 1;
 
-      document.getElementById('digital-card-preview-wrapper').className = `digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl ${currentTheme}`;
-      document.getElementById('digital-card-preview-wrapper').innerHTML = `
-        <div class="flex items-center justify-between border-b border-white/20 pb-2">
-          <h4 class="font-bank-title text-xs font-extrabold">${designConfig.bankName}</h4>
-          <span class="text-[9px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">${designConfig.cardTag}</span>
+      if (!name || isNaN(price) || price <= 0 || qty <= 0) {
+        showToast('Isi data barang, harga, dan jumlah dengan benar!', 'error');
+        return;
+      }
+
+      const existingIndex = posCart.findIndex(item => item.name.toLowerCase() === name.toLowerCase() && item.price === price);
+      if (existingIndex !== -1) {
+        posCart[existingIndex].qty += qty;
+      } else {
+        posCart.push({ id: `ITEM-${Date.now()}`, name, price, qty });
+      }
+
+      renderPosCart();
+      showToast(`${name} (${qty}x) ditambahkan`);
+
+      document.getElementById('pos-item-name').value = '';
+      document.getElementById('pos-item-price').value = '';
+      document.getElementById('pos-item-qty').value = '1';
+      document.getElementById('pos-item-name').focus();
+    }
+
+    function updatePosCartQty(index, delta) {
+      if (!posCart[index]) return;
+      posCart[index].qty += delta;
+      if (posCart[index].qty <= 0) {
+        posCart.splice(index, 1);
+      }
+      renderPosCart();
+    }
+
+    function clearPosCart() { posCart = []; renderPosCart(); }
+
+    function renderPosCart() {
+      const tbody = document.getElementById('pos-cart-body');
+      const totalEl = document.getElementById('pos-cart-total');
+      if (!tbody || !totalEl) return;
+
+      if (posCart.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada barang yang dimasukkan</td></tr>`;
+        totalEl.innerText = formatRupiah(0);
+        return;
+      }
+
+      let grandTotal = 0;
+      tbody.innerHTML = posCart.map((item, index) => {
+        const subtotal = item.price * item.qty;
+        grandTotal += subtotal;
+        return `
+          <tr>
+            <td class="p-2.5 font-bold text-slate-800">${item.name}</td>
+            <td class="p-2.5 text-center font-mono">${formatRupiah(item.price)}</td>
+            <td class="p-2.5 text-center font-bold">
+              <button type="button" onclick="updatePosCartQty(${index}, -1)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded font-bold text-xs active-scale">-</button>
+              <span class="mx-2 font-mono text-slate-900">${item.qty}</span>
+              <button type="button" onclick="updatePosCartQty(${index}, 1)" class="px-2 py-0.5 bg-slate-200 hover:bg-slate-300 rounded font-bold text-xs active-scale">+</button>
+            </td>
+            <td class="p-2.5 text-right font-black text-emerald-700 font-mono">${formatRupiah(subtotal)}</td>
+            <td class="p-2.5 text-center"><button type="button" onclick="updatePosCartQty(${index}, -${item.qty})" class="text-red-500 font-bold hover:text-red-700">✕</button></td>
+          </tr>
+        `;
+      }).join('');
+
+      totalEl.innerText = formatRupiah(grandTotal);
+    }
+
+    function updatePosStudentDropdown() {
+      const select = document.getElementById('pos-student-select');
+      const active = students.filter(s => s.status !== 'DIHAPUS');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Scan / Pilih Siswa Pembayar --</option>' + 
+        active.map(s => `<option value="${s.id}">${s.name} (${formatRupiah(s.balance)})</option>`).join('');
+    }
+
+    function togglePosCameraScanner() { if (isPosCameraActive) stopPosCameraScanner(); else startPosCameraScanner(); }
+
+    function startPosCameraScanner() {
+      const wrapper = document.getElementById('pos-camera-wrapper');
+      wrapper.classList.remove('hidden');
+      document.getElementById('btn-pos-camera-toggle').innerText = '🛑 Stop Kamera';
+
+      posQrScanner = new Html5Qrcode("pos-qr-reader");
+      posQrScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 130 } }, (decodedText) => {
+        document.getElementById('pos-scan-input').value = decodedText;
+        processPosPayment(); stopPosCameraScanner();
+      }, () => {}).then(() => { isPosCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera POS", "error"); stopPosCameraScanner(); });
+    }
+
+    function stopPosCameraScanner() {
+      if (posQrScanner && isPosCameraActive) {
+        posQrScanner.stop().then(() => {
+          posQrScanner.clear(); isPosCameraActive = false;
+          document.getElementById('pos-camera-wrapper').classList.add('hidden');
+          document.getElementById('btn-pos-camera-toggle').innerText = '📷 Buka Kamera Scan Kartu';
+        }).catch(() => {});
+      }
+    }
+
+    function processPosPayment() {
+      const scanVal = document.getElementById('pos-scan-input').value.trim().toLowerCase();
+      const selectVal = document.getElementById('pos-student-select').value;
+      const totalAmount = posCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+      if (totalAmount <= 0) { showToast('Keranjang barang masih kosong!', 'error'); return; }
+
+      let student = null;
+      if (scanVal) {
+        student = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === scanVal || s.accountNo.toLowerCase() === scanVal || s.id.toLowerCase() === scanVal));
+      } else if (selectVal) {
+        student = students.find(s => s.id === selectVal);
+      }
+
+      if (!student) { showToast('Pindai kartu atau pilih nama siswa dulu!', 'error'); return; }
+      if (student.balance < totalAmount) { showToast(`Saldo ${student.name} tidak mencukupi!`, 'error'); return; }
+
+      student.balance -= totalAmount;
+      
+      const posTxRecord = {
+        id: `POS-${Date.now()}`,
+        date: new Date().toLocaleDateString('id-ID'),
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        studentId: student.id,
+        studentName: student.name,
+        accountNo: student.accountNo,
+        items: [...posCart],
+        total: totalAmount,
+        lastBalance: student.balance
+      };
+
+      posHistory.unshift(posTxRecord);
+      transactions.push({ id: posTxRecord.id, date: posTxRecord.date, time: posTxRecord.time, studentId: student.id, type: 'WITHDRAWAL', amount: totalAmount, runningBalance: student.balance, teller: 'POS-TOKO' });
+
+      saveStorage();
+      showToast(`Transaksi ${formatRupiah(totalAmount)} oleh ${student.name} Berhasil!`);
+      
+      showPosReceiptModal(posTxRecord.id);
+
+      clearPosCart();
+      document.getElementById('pos-scan-input').value = '';
+      updatePosStudentDropdown();
+      renderPosHistory();
+      renderPassbook();
+    }
+
+    /* FITUR STRUK CETAK NOTA PERDAGANGAN */
+    function showPosReceiptModal(posTxId) {
+      const record = posHistory.find(h => h.id === posTxId);
+      if (!record) return;
+
+      const area = document.getElementById('receipt-print-area');
+      area.innerHTML = `
+        <div class="text-center space-y-0.5 border-b border-dashed border-slate-400 pb-2">
+          <p class="font-bold text-xs uppercase">${designConfig.schoolName}</p>
+          <p class="text-[9px]">KANTIN & TOKO KOPERASI SEKOLAH</p>
+          <p class="text-[8px] opacity-75">${record.date} ${record.time} | ID: ${record.id}</p>
         </div>
-        <div class="flex items-center gap-3.5 my-2">
-          <div class="w-16 h-20 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20 shadow-inner flex-shrink-0">
-            <img src="${student.avatar}" class="w-full h-full object-cover">
+        <div class="border-b border-dashed border-slate-400 py-1 space-y-0.5 text-[10px]">
+          <p><strong>Pembayar:</strong> ${record.studentName}</p>
+          <p><strong>No Rek:</strong> ${record.accountNo}</p>
+        </div>
+        <div class="border-b border-dashed border-slate-400 py-2 space-y-1">
+          ${record.items.map(i => `
+            <div class="flex justify-between text-[10px]">
+              <span>${i.name} x${i.qty}</span>
+              <span class="font-mono">${formatRupiah(i.price * i.qty)}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="pt-1 text-[10px] space-y-1">
+          <div class="flex justify-between font-bold">
+            <span>TOTAL:</span>
+            <span class="font-mono">${formatRupiah(record.total)}</span>
           </div>
-          <div class="text-xs space-y-1 text-white flex-1 min-w-0">
-            <p class="font-bold text-sm truncate">${student.name}</p>
-            <p class="font-mono text-xs font-bold text-amber-300">NIS: ${student.nis}</p>
-            <p class="text-[10px] bg-black/30 px-2 py-0.5 rounded inline-block">${student.class}</p>
+          <div class="flex justify-between text-[9px] opacity-75">
+            <span>METODE:</span>
+            <span>POTONG SALDO TABUNGAN</span>
+          </div>
+          <div class="flex justify-between text-[9px] opacity-75">
+            <span>SISA SALDO:</span>
+            <span class="font-mono">${formatRupiah(record.lastBalance)}</span>
           </div>
         </div>
-        <div class="border-t border-white/20 pt-2 flex justify-between items-end">
-          <div class="bg-white p-1.5 rounded w-36">${generateBarcodeSVG(student.nis)}<p class="text-[7px] text-slate-800 text-center font-mono font-bold">NIS: ${student.nis}</p></div>
-          <div class="text-right font-mono"><p class="text-[8px] opacity-75">REKENING</p><p class="font-black text-xs">${student.accountNo}</p></div>
+        <div class="text-center pt-2 border-t border-dashed border-slate-400 text-[8px] opacity-75">
+          <p>*** TERIMA KASIH ***</p>
+          <p>TabungKu Smart Banking POS System</p>
         </div>
       `;
+
+      document.getElementById('modal-pos-receipt').classList.remove('hidden');
     }
 
-    async function downloadDigitalCardImage() {
-      const select = document.getElementById('digital-student-select');
-      const student = students.find(s => s.id === select.value);
-      if (!student) return;
-
-      const canvas = document.getElementById('receipt-canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = 1014; canvas.height = 640;
-
-      ctx.fillStyle = '#064e3b'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      const loadImage = src => new Promise(res => { const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => res(img); img.onerror = () => res(null); img.src = src; });
-
-      try {
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 26px "Cinzel", serif'; ctx.fillText(designConfig.bankName, 60, 65);
-        const avatar = await loadImage(student.avatar);
-        if (avatar) ctx.drawImage(avatar, 60, 175, 170, 220);
-
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 32px sans-serif'; ctx.fillText(student.name.toUpperCase(), 260, 245);
-        ctx.fillStyle = '#fde047'; ctx.font = 'bold 22px monospace'; ctx.fillText(`NIS: ${student.nis}`, 260, 285);
-
-        // Render Barcode PNG dari SVG
-        const svgBlob = new Blob([generateBarcodeSVG(student.nis)], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(svgBlob);
-        const barImg = await loadImage(url);
-        if (barImg) ctx.drawImage(barImg, 60, 475, 300, 90);
-
-        const link = document.createElement('a');
-        link.download = `Kartu_${student.nis}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('Kartu Digital berhasil diunduh!');
-      } catch(e) { showToast('Gagal mengunduh kartu', 'error'); }
+    function closeModalPosReceipt() {
+      document.getElementById('modal-pos-receipt').classList.add('hidden');
     }
 
-    /* --- SCANNER KAMERA BELAKANG ANDROID (STABIL) --- */
-    function toggleCameraScanner() {
-      if (isCameraActive) stopCameraScanner();
-      else startCameraScanner();
+    function renderPosHistory() {
+      const tbody = document.getElementById('pos-history-body');
+      if (!tbody) return;
+
+      if (posHistory.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada riwayat transaksi toko</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = posHistory.map(h => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2.5 font-mono text-slate-800">${h.date}<span class="block text-[9px] text-slate-400">${h.time}</span></td>
+          <td class="p-2.5 font-bold text-slate-900">${h.studentName}</td>
+          <td class="p-2.5 text-slate-600">${h.items.map(i => `${i.name} (${i.qty})`).join(', ')}</td>
+          <td class="p-2.5 text-right font-black text-emerald-700 font-mono">${formatRupiah(h.total)}</td>
+          <td class="p-2.5 text-center">
+            <button onclick="showPosReceiptModal('${h.id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-[10px] active-scale">🧾 Struk</button>
+          </td>
+        </tr>
+      `).join('');
     }
+
+    /* TELLER & SCANNER KARTU TRANSAKSI */
+    function toggleCameraScanner() { if (isCameraActive) stopCameraScanner(); else startCameraScanner(); }
 
     function startCameraScanner() {
       const wrapper = document.getElementById('camera-preview-wrapper');
-      const btn = document.getElementById('btn-camera-toggle');
       wrapper.classList.remove('hidden');
-      btn.innerHTML = '🛑 Stop Kamera';
-      btn.className = 'px-3 py-2 bg-red-600 text-white text-xs font-bold rounded-xl shadow';
+      document.getElementById('btn-camera-toggle').innerText = '🛑 Stop Kamera';
+      const badge = document.getElementById('scan-status-badge');
+      if (badge) { badge.innerText = 'KAMERA AKTIF'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500 text-slate-900 font-bold'; }
 
       html5QrCodeScanner = new Html5Qrcode("qr-reader");
-      // Memaksa penggunaan kamera belakang perangkat seluler (environment)
-      html5QrCodeScanner.start(
-        { facingMode: "environment" },
-        { fps: 15, qrbox: { width: 280, height: 140 } },
-        (decodedText) => {
-          document.getElementById('scan-input').value = decodedText;
-          handleScanCard();
-          stopCameraScanner();
-        },
-        () => {}
-      ).then(() => { isCameraActive = true; }).catch(err => {
-        showToast("Kamera belakang tidak dapat diakses", "error");
-        stopCameraScanner();
-      });
+      html5QrCodeScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 280, height: 140 } }, (decodedText) => {
+        document.getElementById('scan-input').value = decodedText; handleScanCard(); stopCameraScanner();
+      }, () => {}).then(() => { isCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera scanner", "error"); stopCameraScanner(); });
     }
 
     function stopCameraScanner() {
       if (html5QrCodeScanner && isCameraActive) {
         html5QrCodeScanner.stop().then(() => {
-          html5QrCodeScanner.clear();
-          isCameraActive = false;
+          html5QrCodeScanner.clear(); isCameraActive = false;
           document.getElementById('camera-preview-wrapper').classList.add('hidden');
-          document.getElementById('btn-camera-toggle').innerHTML = '📷 Kamera Belakang';
-          document.getElementById('btn-camera-toggle').className = 'px-3 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl shadow';
+          document.getElementById('btn-camera-toggle').innerText = '📷 Buka Kamera';
+          const badge = document.getElementById('scan-status-badge');
+          if (badge) { badge.innerText = 'SIAP SCAN'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'; }
         }).catch(() => {});
       }
     }
 
+    function handleScanKeyPress(e) { if (e.key === 'Enter') { e.preventDefault(); handleScanCard(); } }
+
     function handleScanCard() {
       const query = document.getElementById('scan-input').value.trim().toLowerCase();
-      if (!query) { playSound('error'); showToast('Scan kosong', 'error'); return; }
-      const found = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === query || s.accountNo.toLowerCase() === query));
+      if (!query) return;
+      const found = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === query || s.accountNo.toLowerCase() === query || s.id.toLowerCase() === query));
       if (found) {
-        playSound('scan');
         document.getElementById('tx-student-id').value = found.id;
         updateActiveStudentPreview();
-        showToast(`Ditemukan: ${found.name}`);
-      } else {
-        playSound('error');
-        showToast('Siswa tidak terdaftar', 'error');
-      }
+        document.getElementById('tx-amount').focus();
+        showToast(`Siswa Ditemukan: ${found.name}`);
+      } else { showToast('Kartu / NIS tidak terdaftar!', 'error'); }
     }
-
-    /* --- TELLER & RENDER LAINNYA --- */
-    function setQuickAmount(amt) { document.getElementById('tx-amount').value = amt; }
-    function handleScanKeyPress(e) { if (e.key === 'Enter') { e.preventDefault(); handleScanCard(); } }
 
     function updateTransactionDropdowns() {
       const select = document.getElementById('tx-student-id');
@@ -681,12 +1074,16 @@
       const preview = document.getElementById('active-student-preview');
       if (!student || !preview) return;
       preview.innerHTML = `
-        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border">
-          <img src="${student.avatar}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500">
-          <div><h4 class="font-bold">${student.name}</h4><p class="text-[11px] font-mono text-slate-500">${student.accountNo}</p></div>
+        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <img src="${student.avatar}" class="w-12 h-12 rounded-xl object-cover border-2 border-emerald-500 shadow-sm" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'">
+          <div>
+            <h4 class="font-bold text-slate-900">${student.name}</h4>
+            <p class="text-[11px] font-mono text-slate-500">${student.accountNo}</p>
+            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">${student.class}</span>
+          </div>
         </div>
-        <div class="bg-emerald-950 text-emerald-300 p-3 rounded-xl flex justify-between items-center">
-          <div><p class="text-[10px] text-emerald-400 font-bold uppercase">Saldo Aktif</p><p class="text-lg font-black text-white">${formatRupiah(student.balance)}</p></div>
+        <div class="bg-gradient-to-r from-emerald-950 to-slate-900 text-emerald-300 p-3 rounded-xl flex justify-between items-center shadow-inner">
+          <div><p class="text-[10px] uppercase font-bold text-emerald-400">Saldo Rekening Aktif</p><p class="text-lg font-black text-white font-mono">${formatRupiah(student.balance)}</p></div>
         </div>
       `;
     }
@@ -699,47 +1096,607 @@
       const student = students.find(s => s.id === studentId);
       if (!student) return;
 
-      if (type === 'WITHDRAWAL' && student.balance < amount) { showToast('Saldo tidak cukup', 'error'); return; }
+      if (type === 'WITHDRAWAL' && student.balance < amount) { showToast('Saldo tidak mencukupi!', 'error'); return; }
       if (type === 'DEPOSIT') student.balance += amount; else student.balance -= amount;
 
-      const tx = {
-        id: `TRX-${Date.now()}`, date: new Date().toLocaleDateString('id-ID'), time: '10:00',
-        studentId: student.id, type, amount, runningBalance: student.balance, teller: 'TLR01'
-      };
-      transactions.push(tx);
-      saveStorage();
-      playSound('success');
-      updateTransactionDropdowns();
-      showToast('Transaksi Berhasil!');
+      transactions.push({ id: `TRX-${Date.now()}`, date: new Date().toLocaleDateString('id-ID'), time: '10:00', studentId: student.id, type, amount, runningBalance: student.balance, teller: 'TLR01' });
+      saveStorage(); updateTransactionDropdowns(); renderPassbook();
+      document.getElementById('tx-amount').value = '';
+      showToast(`Transaksi ${type === 'DEPOSIT' ? 'Setor' : 'Tarik'} ${formatRupiah(amount)} Berhasil!`);
     }
 
+    /* SCAN CEK SALDO MANDIRI */
+    function populateBalanceSelect() {
+      const select = document.getElementById('balance-select-student');
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+      if (!select) return;
+      select.innerHTML = '<option value="">-- Pilih Nama Siswa untuk Cek Saldo --</option>' + 
+        activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class} (${s.nis})</option>`).join('');
+    }
+
+    function toggleBalanceCamera() { if (isBalanceCameraActive) stopBalanceCamera(); else startBalanceCamera(); }
+
+    function startBalanceCamera() {
+      const wrapper = document.getElementById('balance-camera-wrapper');
+      wrapper.classList.remove('hidden');
+      document.getElementById('btn-balance-cam-toggle').innerText = '🛑 Stop Kamera';
+
+      balanceQrScanner = new Html5Qrcode("balance-qr-reader");
+      balanceQrScanner.start({ facingMode: "environment" }, { fps: 15, qrbox: { width: 260, height: 130 } }, (decodedText) => {
+        document.getElementById('balance-query-input').value = decodedText; executeBalanceCheck(); stopBalanceCamera();
+      }, () => {}).then(() => { isBalanceCameraActive = true; }).catch(() => { showToast("Gagal membuka kamera scan saldo", "error"); stopBalanceCamera(); });
+    }
+
+    function stopBalanceCamera() {
+      if (balanceQrScanner && isBalanceCameraActive) {
+        balanceQrScanner.stop().then(() => {
+          balanceQrScanner.clear(); isBalanceCameraActive = false;
+          document.getElementById('balance-camera-wrapper').classList.add('hidden');
+          document.getElementById('btn-balance-cam-toggle').innerText = 'Buka Kamera';
+        }).catch(() => {});
+      }
+    }
+
+    function executeBalanceCheckSelect() {
+      const id = document.getElementById('balance-select-student').value;
+      if (id) displayBalanceModalById(id);
+    }
+
+    function executeBalanceCheck() {
+      const query = document.getElementById('balance-query-input').value.trim().toLowerCase();
+      if (!query) { showToast('Masukkan NIS atau No Rekening terlebih dahulu', 'error'); return; }
+
+      const student = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === query || s.accountNo.toLowerCase() === query || s.id.toLowerCase() === query));
+      if (student) displayBalanceModalById(student.id);
+      else showToast('Data nasabah tidak ditemukan', 'error');
+    }
+
+    function displayBalanceModalById(studentId) {
+      const student = students.find(s => s.id === studentId);
+      if (!student) return;
+
+      document.getElementById('res-student-name').innerText = student.name;
+      document.getElementById('res-student-nis').innerText = `NIS: ${student.nis}`;
+      document.getElementById('res-student-balance').innerText = formatRupiah(student.balance);
+      document.getElementById('res-student-account').innerText = student.accountNo;
+      document.getElementById('res-student-class').innerText = student.class;
+
+      const studentTx = transactions.filter(t => t.studentId === student.id).slice(-3).reverse();
+      const historyContainer = document.getElementById('res-tx-history');
+
+      if (studentTx.length === 0) {
+        historyContainer.innerHTML = `<p class="text-[10px] text-slate-400 text-center py-2">Belum ada riwayat transaksi</p>`;
+      } else {
+        historyContainer.innerHTML = studentTx.map(t => `
+          <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+            <div>
+              <span class="font-bold ${t.type === 'DEPOSIT' ? 'text-emerald-600' : 'text-red-600'} text-[10px]">${t.type === 'DEPOSIT' ? '📥 SETOR' : '📤 TARIK'}</span>
+              <p class="text-[8px] text-slate-400">${t.date}</p>
+            </div>
+            <span class="font-bold font-mono text-[11px] ${t.type === 'DEPOSIT' ? 'text-emerald-700' : 'text-red-600'}">${t.type === 'DEPOSIT' ? '+' : '-'}${formatRupiah(t.amount)}</span>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('modal-balance-result').classList.remove('hidden');
+    }
+
+    function closeModalBalanceResult() { document.getElementById('modal-balance-result').classList.add('hidden'); }
+
+    /* RENDER BUKU TABUNGAN */
+    function renderPassbook() {
+      const studentSelect = document.getElementById('passbook-student-select');
+      const viewMode = document.getElementById('passbook-view-mode').value;
+      const printStyle = document.getElementById('passbook-print-style').value;
+      const lineOffset = parseInt(document.getElementById('passbook-line-offset').value) || 1;
+      const container = document.getElementById('passbook-sheet-container');
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+
+      if (!studentSelect || !container) return;
+
+      if (studentSelect.options.length !== activeStudents.length) {
+        studentSelect.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class} (${s.accountNo})</option>`).join('');
+      }
+
+      const student = activeStudents.find(s => s.id === studentSelect.value) || activeStudents[0];
+      if (!student) return;
+
+      if (viewMode === 'COVER_OUTER') {
+        container.innerHTML = `
+          <div class="passbook-bank-sheet ${printStyle === 'FULL_PREVIEW' ? currentTheme : 'bg-white text-slate-900 border-2 border-slate-900'} rounded-lg p-8 flex flex-col justify-between">
+            <div class="flex justify-between items-start border-b border-current pb-4">
+              <div>
+                <h1 class="font-bank-title text-2xl font-extrabold">${designConfig.bankName}</h1>
+                <p class="text-xs uppercase tracking-wider">${designConfig.schoolName}</p>
+              </div>
+              <span class="border border-current px-3 py-1 rounded-full text-xs font-mono font-bold">PASSBOOK</span>
+            </div>
+            <div class="text-center my-auto space-y-2">
+              <h2 class="font-bank-title text-3xl font-black tracking-widest uppercase">BUKU TABUNGAN SISWA</h2>
+            </div>
+            <div class="border-t border-current pt-4 flex justify-between items-end font-mono">
+              <div><p class="text-[10px] opacity-75">NAMA NASABAH:</p><p class="text-sm font-extrabold uppercase">${student.name}</p></div>
+              <div class="text-right"><p class="text-[10px] opacity-75">NO. REKENING:</p><p class="text-sm font-black">${student.accountNo}</p></div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (viewMode === 'INSIDE_COVER') {
+        container.innerHTML = `
+          <div class="passbook-bank-sheet p-8 ${printStyle === 'FULL_PREVIEW' ? 'bg-slate-50 border-2 border-slate-300' : 'bg-white'} flex flex-col justify-between font-mono text-xs">
+            <div class="border-b-2 border-slate-900 pb-3 flex justify-between items-center">
+              <div>
+                <h3 class="font-bold text-sm text-slate-900">${designConfig.bankName}</h3>
+                <p class="text-[10px] text-slate-600">${designConfig.schoolName}</p>
+              </div>
+              <span class="font-bold border px-2 py-0.5 border-slate-900 text-[10px]">HALAMAN IDENTITAS</span>
+            </div>
+            <div class="grid grid-cols-3 gap-6 my-auto items-center">
+              <div class="w-28 h-36 border-2 border-slate-800 bg-white p-1 flex items-center justify-center">
+                <img src="${student.avatar}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'">
+              </div>
+              <div class="col-span-2 space-y-2 text-slate-900">
+                <div class="grid grid-cols-3"><span class="font-bold">NO. REKENING</span><span class="col-span-2 font-black text-sm">: ${student.accountNo}</span></div>
+                <div class="grid grid-cols-3"><span class="font-bold">NAMA NASABAH</span><span class="col-span-2 font-bold uppercase">: ${student.name}</span></div>
+                <div class="grid grid-cols-3"><span>NIS</span><span class="col-span-2">: ${student.nis}</span></div>
+                <div class="grid grid-cols-3"><span>KELAS</span><span class="col-span-2">: ${student.class}</span></div>
+              </div>
+            </div>
+            <div class="flex justify-between items-end border-t border-slate-800 pt-3">
+              <p class="text-[9px] text-slate-500">Dicetak secara sistem oleh TabungKu Smart Banking</p>
+              <div class="text-center text-[10px]">
+                <p>${designConfig.signatoryTitle || 'Kepala Sekolah,'}</p>
+                <div class="h-8"></div>
+                <p class="font-bold border-b border-slate-900 pb-0.5 uppercase">${designConfig.headmaster}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const studentTx = transactions.filter(t => t.studentId === student.id);
+      let blankRowsHtml = '';
+      for (let i = 1; i < lineOffset; i++) {
+        blankRowsHtml += `<tr class="passbook-row-height"><td class="p-1 text-center font-bold text-slate-300 opacity-50">${i}</td><td colspan="5"></td></tr>`;
+      }
+      const isTextOnly = printStyle === 'TEXT_ONLY';
+
+      container.innerHTML = `
+        <div class="passbook-bank-sheet p-6 ${isTextOnly ? 'bg-white' : 'bg-slate-50 border-2 border-slate-300'} flex flex-col justify-between font-mono text-xs">
+          <div class="${isTextOnly ? 'border-b border-slate-400' : 'border-b-2 border-slate-900 bg-slate-100 p-2 rounded'} pb-1.5 flex justify-between items-center">
+            <span class="font-bold text-slate-900">${designConfig.bankName}</span>
+            <span class="font-bold text-slate-800">NO REK: ${student.accountNo} | NASABAH: ${student.name.toUpperCase()}</span>
+          </div>
+          <div class="flex-1 my-2 overflow-hidden">
+            <table class="w-full text-left border-collapse text-[11px]">
+              <thead>
+                <tr class="${isTextOnly ? 'border-b border-slate-400' : 'border-b-2 border-slate-900 bg-slate-200'} font-bold">
+                  <th class="p-1 w-8 text-center">NO</th>
+                  <th class="p-1 w-20">TANGGAL</th>
+                  <th class="p-1 w-12 text-center">KD</th>
+                  <th class="p-1 text-right">SETOR (RP)</th>
+                  <th class="p-1 text-right">TARIK (RP)</th>
+                  <th class="p-1 text-right">SALDO (RP)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${blankRowsHtml}
+                ${studentTx.map((tx, idx) => {
+                  const rowNum = lineOffset + idx;
+                  if (rowNum > 16) return '';
+                  return `
+                    <tr class="passbook-row-height ${isTextOnly ? '' : 'border-b border-slate-200'}">
+                      <td class="p-1 text-center font-bold">${rowNum}</td>
+                      <td class="p-1">${tx.date}</td>
+                      <td class="p-1 text-center font-bold">${tx.type === 'DEPOSIT' ? 'KM' : 'KK'}</td>
+                      <td class="p-1 text-right text-emerald-800 font-bold">${tx.type === 'DEPOSIT' ? tx.amount.toLocaleString('id-ID') : '-'}</td>
+                      <td class="p-1 text-right text-red-700 font-bold">${tx.type === 'WITHDRAWAL' ? tx.amount.toLocaleString('id-ID') : '-'}</td>
+                      <td class="p-1 text-right font-black text-slate-900">${tx.runningBalance.toLocaleString('id-ID')}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    /* RENDER KARTU DIGITAL */
+    function renderDigitalCard() {
+      const select = document.getElementById('digital-student-select');
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+      if (!select) return;
+      
+      if (select.options.length !== activeStudents.length) {
+        select.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+      }
+
+      const student = activeStudents.find(s => s.id === select.value) || activeStudents[0];
+      const wrapper = document.getElementById('digital-card-preview-wrapper');
+      if (!student || !wrapper) return;
+
+      const logoHtml = institutionLogoBase64 
+        ? `<img src="${institutionLogoBase64}" class="w-8 h-8 object-contain">` 
+        : `<span class="text-2xl">🏫</span>`;
+
+      wrapper.className = `digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl ${currentTheme}`;
+      wrapper.innerHTML = `
+        <div class="flex items-center justify-between border-b border-white/20 pb-2">
+          <div class="flex items-center gap-2.5">
+            ${logoHtml}
+            <div>
+              <h4 class="font-bank-title text-xs font-extrabold tracking-wide leading-tight">${designConfig.bankName}</h4>
+              <p class="text-[9px] opacity-80 uppercase leading-none">${designConfig.schoolName}</p>
+            </div>
+          </div>
+          <span class="text-[9px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">${designConfig.cardTag || 'SMART CARD'}</span>
+        </div>
+
+        <div class="flex items-center gap-3.5 my-2">
+          <div class="w-16 h-20 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20 shadow-inner flex-shrink-0">
+            <img src="${student.avatar}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'">
+          </div>
+          <div class="text-xs space-y-1 text-white flex-1 min-w-0">
+            <p class="text-[9px] opacity-75 font-mono">${designConfig.cardTitle || 'KARTU TANDA PELAJAR'}</p>
+            <p class="font-bold text-sm leading-tight uppercase tracking-tight truncate">${student.name}</p>
+            <p class="font-mono text-xs font-bold text-amber-300">NIS: ${student.nis}</p>
+            <p class="text-[10px] font-semibold bg-black/30 px-2 py-0.5 rounded inline-block border border-white/10 truncate">${student.class}</p>
+          </div>
+        </div>
+
+        <div class="border-t border-white/20 pt-2 flex justify-between items-end">
+          <div class="bg-white p-1.5 rounded w-36">
+            ${generateBarcodeSVG(student.nis)}
+            <p class="text-[7px] text-slate-800 text-center font-mono font-bold mt-0.5">NIS: ${student.nis}</p>
+          </div>
+          <div class="text-right font-mono">
+            <p class="text-[8px] opacity-75">NO. REKENING</p>
+            <p class="font-black text-xs tracking-wider">${student.accountNo}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    /* UNDUH KARTU DIGITAL PNG */
+    async function downloadDigitalCardImage() {
+      const select = document.getElementById('digital-student-select');
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      showToast('Memproses gambar kartu digital...', 'success');
+
+      const canvas = document.getElementById('receipt-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1014;
+      canvas.height = 640;
+
+      const loadImageAsync = (src) => new Promise((resolve) => {
+        if (!src) return resolve(null);
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+
+      try {
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        if (currentTheme === 'theme-blue') {
+          grad.addColorStop(0, '#0f172a'); grad.addColorStop(0.5, '#1e3a8a'); grad.addColorStop(1, '#1e40af');
+        } else if (currentTheme === 'theme-maroon') {
+          grad.addColorStop(0, '#450a0a'); grad.addColorStop(0.5, '#7f1d1d'); grad.addColorStop(1, '#991b1b');
+        } else if (currentTheme === 'theme-black') {
+          grad.addColorStop(0, '#090d16'); grad.addColorStop(0.5, '#1e293b'); grad.addColorStop(1, '#0f172a');
+        } else {
+          grad.addColorStop(0, '#064e3b'); grad.addColorStop(0.5, '#047857'); grad.addColorStop(1, '#022c22');
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const svgBarcodeString = generateBarcodeSVG(student.nis);
+        const svgBlob = new Blob([svgBarcodeString], { type: 'image/svg+xml;charset=utf-8' });
+        const URLObj = window.URL || window.webkitURL || window;
+        const barcodeBlobUrl = URLObj.createObjectURL(svgBlob);
+
+        const [logoImg, avatarImg, barcodeImg] = await Promise.all([
+          institutionLogoBase64 ? loadImageAsync(institutionLogoBase64) : Promise.resolve(null),
+          student.avatar ? loadImageAsync(student.avatar) : Promise.resolve(null),
+          loadImageAsync(barcodeBlobUrl)
+        ]);
+        URLObj.revokeObjectURL(barcodeBlobUrl);
+
+        let startXText = 60;
+        if (logoImg) {
+          ctx.drawImage(logoImg, 60, 35, 55, 55);
+          startXText = 130;
+        }
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 26px sans-serif';
+        ctx.fillText(designConfig.bankName.toUpperCase(), startXText, 62);
+        
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = '#cbd5e1';
+        ctx.fillText(designConfig.schoolName.toUpperCase(), startXText, 90);
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(60, 125); ctx.lineTo(954, 125); ctx.stroke();
+
+        if (avatarImg) {
+          ctx.drawImage(avatarImg, 60, 160, 170, 215);
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+          ctx.lineWidth = 4;
+          ctx.strokeRect(60, 160, 170, 215);
+        }
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 14px monospace';
+        ctx.fillText((designConfig.cardTitle || 'KARTU TANDA PELAJAR').toUpperCase(), 260, 185);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.fillText(student.name.toUpperCase(), 260, 230);
+
+        ctx.fillStyle = '#fde047';
+        ctx.font = 'bold 22px monospace';
+        ctx.fillText(`NIS: ${student.nis}`, 260, 270);
+
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.fillRect(260, 295, 260, 40);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(student.class, 275, 321);
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.beginPath(); ctx.moveTo(60, 420); ctx.lineTo(954, 420); ctx.stroke();
+
+        if (barcodeImg) {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(60, 455, 320, 120);
+          ctx.drawImage(barcodeImg, 70, 465, 300, 80);
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 12px monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(`NIS: ${student.nis}`, 220, 565);
+          ctx.textAlign = 'left';
+        }
+
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = 'bold 14px monospace';
+        ctx.fillText('NO. REKENING TABUNGAN', 600, 485);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px monospace';
+        ctx.fillText(student.accountNo, 600, 525);
+
+        const link = document.createElement('a');
+        link.download = `KartuDigital_${student.nis}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('Kartu Digital Berhasil Diunduh!');
+      } catch (e) {
+        showToast('Gagal mengunduh kartu digital', 'error');
+      }
+    }
+
+    /* RENDER TABEL NASABAH */
     function renderStudentsTable() {
       const tbody = document.getElementById('student-table-body');
+      const search = document.getElementById('search-student-input')?.value.toLowerCase() || '';
+      const filterClass = document.getElementById('filter-class-select')?.value || 'ALL';
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+
+      const filterSelect = document.getElementById('filter-class-select');
+      if (filterSelect) {
+        const classes = [...new Set(activeStudents.map(s => s.class))];
+        filterSelect.innerHTML = '<option value="ALL">Semua Kelas Custom</option>' + classes.map(c => `<option value="${c}" ${filterClass === c ? 'selected' : ''}>${c}</option>`).join('');
+      }
+
+      const filtered = activeStudents.filter(s => {
+        const matchSearch = s.name.toLowerCase().includes(search) || s.nis.toLowerCase().includes(search) || s.accountNo.toLowerCase().includes(search);
+        const matchClass = filterClass === 'ALL' || s.class === filterClass;
+        return matchSearch && matchClass;
+      });
+
       if (!tbody) return;
-      tbody.innerHTML = students.filter(s => s.status !== 'DIHAPUS').map(s => `
-        <tr>
-          <td class="p-3"><img src="${s.avatar}" class="w-10 h-10 rounded-xl object-cover"></td>
-          <td class="p-3 font-mono font-bold">${s.accountNo}<span class="block text-[10px] text-slate-400">NIS: ${s.nis}</span></td>
-          <td class="p-3 font-bold">${s.name}</td>
-          <td class="p-3">${s.class}</td>
-          <td class="p-3 font-black text-emerald-600">${formatRupiah(s.balance)}</td>
-          <td class="p-3 text-center"><button onclick="switchTab('digital-card'); document.getElementById('digital-student-select').value='${s.id}'; renderDigitalCard();" class="px-2 py-1 bg-blue-600 text-white rounded font-bold text-xs">📱</button></td>
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-slate-400">Tidak ada data nasabah siswa.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="p-3"><img src="${s.avatar}" class="w-10 h-10 rounded-xl object-cover border-2 border-emerald-500 shadow-sm" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'"></td>
+          <td class="p-3 font-mono font-bold text-slate-800">${s.accountNo}<span class="block text-[10px] text-slate-400">NIS: ${s.nis}</span></td>
+          <td class="p-3 font-bold text-slate-900">${s.name}</td>
+          <td class="p-3"><span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 font-bold rounded-lg text-[11px] border border-emerald-200">${s.class}</span></td>
+          <td class="p-3 font-black text-emerald-600 text-sm">${formatRupiah(s.balance)}</td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="displayBalanceModalById('${s.id}')" title="Cek Saldo Siswa" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs shadow">🔍</button>
+              <button onclick="selectStudentForPassbook('${s.id}')" title="Cetak Buku Tabungan" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow">📖</button>
+              <button onclick="editStudent('${s.id}')" title="Edit Nasabah" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-xs shadow">✏️</button>
+              <button onclick="deleteStudent('${s.id}')" title="Hapus Rekening" class="px-2.5 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-xs shadow">🗑️</button>
+            </div>
+          </td>
         </tr>
       `).join('');
+
+      const grandTotal = activeStudents.reduce((acc, s) => acc + (s.balance || 0), 0);
+      document.getElementById('header-total-balance').innerText = formatRupiah(grandTotal);
     }
 
+    function selectStudentForPassbook(id) { switchTab('passbook'); document.getElementById('passbook-student-select').value = id; renderPassbook(); }
+
+    function editStudent(id) {
+      const student = students.find(s => s.id === id);
+      if (!student) return;
+
+      document.getElementById('modal-student-title').innerText = 'Edit Data Nasabah Siswa';
+      document.getElementById('edit-student-id').value = student.id;
+      document.getElementById('new-nis').value = student.nis;
+      document.getElementById('new-name').value = student.name;
+      document.getElementById('new-class').value = student.class;
+      document.getElementById('new-phone').value = student.phone || '';
+      document.getElementById('upload-preview-img').src = student.avatar;
+      tempPhotoBase64 = student.avatar;
+
+      document.getElementById('initial-balance-container').classList.add('hidden');
+      document.getElementById('modal-new-student').classList.remove('hidden');
+    }
+
+    function deleteStudent(id) {
+      const student = students.find(s => s.id === id);
+      if (!student) return;
+      if (confirm(`Hapus data nasabah ${student.name}?`)) {
+        student.status = 'DIHAPUS';
+        saveStorage();
+        renderStudentsTable(); renderPassbook(); populateBalanceSelect(); updatePosStudentDropdown();
+        showToast('Rekening berhasil dihapus');
+      }
+    }
+
+    function openModalNewStudent() {
+      document.getElementById('modal-student-title').innerText = 'Buka Rekening & Upload Foto Siswa';
+      document.getElementById('edit-student-id').value = '';
+      document.getElementById('new-nis').value = '';
+      document.getElementById('new-name').value = '';
+      document.getElementById('new-class').value = '';
+      document.getElementById('new-phone').value = '';
+      document.getElementById('new-initial-balance').value = '50000';
+      document.getElementById('upload-preview-img').src = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+      tempPhotoBase64 = '';
+
+      document.getElementById('initial-balance-container').classList.remove('hidden');
+      document.getElementById('modal-new-student').classList.remove('hidden');
+    }
+
+    function closeModalNewStudent() { document.getElementById('modal-new-student').classList.add('hidden'); }
+
+    function handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => { tempPhotoBase64 = e.target.result; document.getElementById('upload-preview-img').src = tempPhotoBase64; };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleNewStudentSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById('edit-student-id').value;
+      const nis = document.getElementById('new-nis').value;
+      const name = document.getElementById('new-name').value;
+      const className = document.getElementById('new-class').value;
+      const phone = document.getElementById('new-phone').value;
+      const initialBalance = parseFloat(document.getElementById('new-initial-balance').value) || 0;
+      const avatar = tempPhotoBase64 || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80';
+
+      if (editId) {
+        const student = students.find(s => s.id === editId);
+        if (student) {
+          student.nis = nis; student.name = name; student.class = className; student.phone = phone; student.avatar = avatar;
+          showToast(`Data ${name} diperbarui!`);
+        }
+      } else {
+        const newId = `SIS${Date.now()}`;
+        const newAccountNo = `5080-01-${nis.padStart(6, '0')}-53-8`;
+        students.push({ id: newId, nis, accountNo: newAccountNo, name, class: className, phone, avatar, balance: initialBalance, status: 'AKTIF' });
+        if (initialBalance > 0) {
+          transactions.push({ id: `TRX-${Date.now()}`, date: new Date().toLocaleDateString('id-ID'), time: '08:00', studentId: newId, code: 'KM', type: 'DEPOSIT', amount: initialBalance, runningBalance: initialBalance, teller: 'SYS01' });
+        }
+        showToast(`Buka rekening ${name} berhasil!`);
+      }
+
+      saveStorage(); closeModalNewStudent(); renderStudentsTable(); renderPassbook(); renderDigitalCard(); updateTransactionDropdowns(); populateBalanceSelect(); updatePosStudentDropdown();
+    }
+
+    /* RENDER KARTU PVC */
     function renderIDCard() {
       const select = document.getElementById('card-student-select');
-      const student = students.find(s => s.id === select.value) || students[0];
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+      if (!select) return;
+
+      if (select.options.length !== activeStudents.length) {
+        select.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+      }
+
+      const student = activeStudents.find(s => s.id === select.value) || activeStudents[0];
+      const frontContainer = document.getElementById('card-front-container');
+      const backContainer = document.getElementById('card-back-container');
       if (!student) return;
-      document.getElementById('card-front-container').innerHTML = `<div class="id-card-pvc ${currentTheme} rounded-xl p-3 shadow-xl flex flex-col justify-between text-white"><p class="font-bold">${student.name}</p><div class="bg-white p-1 rounded">${generateBarcodeSVG(student.nis)}</div></div>`;
-      document.getElementById('card-back-container').innerHTML = `<div class="id-card-pvc bg-slate-900 text-white rounded-xl p-3 shadow-xl flex flex-col justify-between"><p class="text-[6px]">Ketentuan Kartu</p><div class="bg-white p-1 rounded max-w-[120px]">${generateBarcodeSVG(student.nis)}</div></div>`;
+
+      const logoHtml = institutionLogoBase64 ? `<img src="${institutionLogoBase64}" class="w-6 h-6 object-contain">` : `<span class="text-base">🏫</span>`;
+      const barcodeSvg = generateBarcodeSVG(student.nis);
+
+      frontContainer.innerHTML = `
+        <div class="id-card-pvc ${currentTheme} rounded-xl p-3 shadow-2xl flex flex-col justify-between border border-white/20 relative text-white">
+          <div class="flex items-center justify-between border-b border-white/20 pb-1.5">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 bg-white/20 rounded p-0.5 flex items-center justify-center">${logoHtml}</div>
+              <div>
+                <h4 class="font-bank-title text-[9px] font-extrabold leading-tight">${designConfig.bankName}</h4>
+                <p class="text-[7px] opacity-80 uppercase leading-none">${designConfig.schoolName}</p>
+              </div>
+            </div>
+            <span class="text-[6.5px] font-mono bg-white/20 px-1.5 py-0.5 rounded font-bold">${designConfig.cardTag || 'SMART CARD'}</span>
+          </div>
+          <div class="flex items-center gap-2.5 my-1">
+            <div class="w-12 h-15 rounded-lg border border-white/40 overflow-hidden bg-white/10 shadow-inner">
+              <img src="${student.avatar}" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'">
+            </div>
+            <div class="text-[8px] space-y-0.5 text-white flex-1 min-w-0">
+              <p class="text-[6px] opacity-75 font-mono">${designConfig.cardTitle || 'KARTU TANDA PELAJAR'}</p>
+              <p class="font-extrabold text-[10px] uppercase truncate">${student.name}</p>
+              <p class="font-mono text-[8.5px] font-bold text-amber-300">NIS: ${student.nis}</p>
+              <p class="text-[7px] font-semibold bg-black/40 px-1.5 py-0.5 rounded inline-block border border-white/10 truncate">${student.class}</p>
+            </div>
+          </div>
+          <div class="border-t border-white/20 pt-1 flex justify-between items-end text-[7px] font-mono">
+            <div>
+              <p class="text-[5.5px] opacity-75">NO. REKENING</p>
+              <p class="font-black text-[8.5px] tracking-wider">${student.accountNo}</p>
+            </div>
+            <div class="flex items-center gap-1"><span class="text-[9px]">📡</span><span class="font-bold text-[6px] border border-amber-300/80 text-amber-300 px-1 rounded">NFC</span></div>
+          </div>
+        </div>
+      `;
+
+      backContainer.innerHTML = `
+        <div class="id-card-pvc bg-slate-900 text-slate-100 rounded-xl p-3 shadow-2xl flex flex-col justify-between border border-slate-700 relative">
+          <div class="bg-slate-950 -mx-3 -mt-3 px-3 py-1 h-6 flex items-center justify-between border-b border-slate-800">
+            <span class="text-[6px] font-mono text-slate-400">OFFICIAL STUDENT SMART CARD</span>
+          </div>
+          <div class="text-[6.5px] text-slate-300 space-y-1 my-1 leading-tight">
+            <p>${designConfig.rule1}</p><p>${designConfig.rule2}</p><p>${designConfig.rule3}</p>
+          </div>
+          <div class="flex items-end justify-between border-t border-slate-800 pt-1">
+            <div class="bg-white p-1 rounded max-w-[130px]">${barcodeSvg}<p class="text-[5.5px] text-slate-800 text-center font-mono font-bold mt-0.5">NIS: ${student.nis}</p></div>
+            <div class="text-right text-[6px]"><p class="text-slate-400">${designConfig.signatoryTitle}</p><div class="h-3"></div><p class="font-bold text-amber-400 uppercase">${designConfig.headmaster}</p></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleLogoUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          institutionLogoBase64 = e.target.result; applyHeaderLogo(institutionLogoBase64); saveStorage();
+          renderDigitalCard(); renderIDCard(); renderPassbook(); showToast('Logo berhasil diunggah!');
+        };
+        reader.readAsDataURL(file);
+      }
     }
 
     window.onload = () => {
-      loadStorage();
-      renderStudentsTable();
-      updateTransactionDropdowns();
+      loadStorage(); updatePosStudentDropdown(); renderPosCart(); renderPosHistory(); populateBalanceSelect(); renderPassbook(); renderDigitalCard(); renderStudentsTable(); renderIDCard(); updateTransactionDropdowns();
     };
   </script>
 </body>
