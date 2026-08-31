@@ -57,6 +57,16 @@
       box-sizing: border-box;
     }
 
+    /* KARTU DIGITAL INTERAKTIF (MOBILE FRIENDLY) */
+    .digital-card-container {
+      width: 100%;
+      max-width: 380px;
+      aspect-ratio: 1.586 / 1;
+      box-sizing: border-box;
+      margin: 0 auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    }
+
     /* STRUK THERMAL PRINTER (58mm width) */
     .receipt-thermal {
       width: 58mm;
@@ -70,7 +80,7 @@
       margin: 0 auto;
     }
 
-    /* TEMA WARNA SAMPUL BUKU TABUNGAN */
+    /* TEMA WARNA SAMPUL & KARTU */
     .theme-green { background: linear-gradient(135deg, #064e3b, #047857, #022c22); color: #fde047; }
     .theme-blue { background: linear-gradient(135deg, #0f172a, #1e3a8a, #1e40af); color: #93c5fd; }
     .theme-maroon { background: linear-gradient(135deg, #450a0a, #7f1d1d, #991b1b); color: #fef08a; }
@@ -88,7 +98,7 @@
       transform: scale(0.96);
     }
 
-    /* Safe Area Padding for Modern Mobile Devices (Notch / Home Indicator) */
+    /* Safe Area Padding for Modern Mobile Devices */
     .pb-safe {
       padding-bottom: env(safe-area-inset-bottom, 16px);
     }
@@ -128,27 +138,6 @@
         background: transparent !important;
         border-radius: 0 !important;
       }
-
-      .print-receipt-only .receipt-thermal {
-        width: 58mm !important;
-        margin: 0 !important;
-        padding: 2mm !important;
-        box-shadow: none !important;
-      }
-
-      .print-text-only .passbook-header,
-      .print-text-only .passbook-table-header,
-      .print-text-only .passbook-footer,
-      .print-text-only .passbook-bg,
-      .print-text-only .passbook-border-line {
-        border: none !important;
-        background: transparent !important;
-        visibility: hidden !important;
-      }
-
-      .print-text-only .passbook-data-cell {
-        visibility: visible !important;
-      }
     }
 
     /* Custom scrollbar */
@@ -172,8 +161,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center gap-2.5">
-          <div class="bg-emerald-500 p-2 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale" id="app-logo-badge" onclick="switchTab('passbook')">
-            🏦
+          <!-- LOGO APLIKASI DI HEADER -->
+          <div id="header-logo-wrapper" class="bg-emerald-500 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale overflow-hidden p-1" onclick="switchTab('passbook')" title="Logo Aplikasi / Lembaga">
+            <img id="header-logo-img" src="" class="w-full h-full object-contain hidden">
+            <span id="header-logo-placeholder" class="text-lg">🏦</span>
           </div>
           <div>
             <h1 class="text-base sm:text-lg font-bold leading-none text-white flex items-center gap-1.5">
@@ -187,7 +178,7 @@
         </div>
 
         <div class="flex items-center gap-2">
-          <!-- TOMBOL FULL SCREEN BARU -->
+          <!-- TOMBOL FULL SCREEN -->
           <button onclick="toggleFullScreen()" id="btn-fullscreen-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700 transition" title="Layar Penuh / Full Screen">
             ⛶ <span class="hidden lg:inline">Full Screen</span>
           </button>
@@ -212,51 +203,58 @@
     <div class="hidden md:block bg-slate-800 border-t border-slate-700/60 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto scrollbar-none">
         <button onclick="switchTab('passbook')" id="btn-tab-passbook" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
-          📖 Cetak Buku Bank (210x150mm)
+          📖 Cetak Buku Bank
         </button>
         <button onclick="switchTab('transaction')" id="btn-tab-transaction" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
-          ⚡ Setor / Tap Kartu & Teller
+          ⚡ Teller & Tap Kartu
+        </button>
+        <button onclick="switchTab('digital-card')" id="btn-tab-digital-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
+          📱 Kartu Digital
         </button>
         <button onclick="switchTab('card')" id="btn-tab-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
-          💳 Cetak Kartu Pelajar (PVC)
+          💳 Cetak Kartu PVC
         </button>
         <button onclick="switchTab('students')" id="btn-tab-students" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
-          👥 Data Nasabah Siswa
+          👥 Data Nasabah
         </button>
         <button onclick="switchTab('reports')" id="btn-tab-reports" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
-          📊 Laporan & Rekapitulasi
+          📊 Laporan Keuangan
         </button>
         <button onclick="switchTab('design')" id="btn-tab-design" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 whitespace-nowrap">
-          🎨 Editor Desain & Branding
+          🎨 Editor & Logo
         </button>
       </div>
     </div>
   </header>
 
   <!-- BOTTOM NAVIGATION BAR KHUSUS ANDROID / MOBILE -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 px-2 py-1.5 pb-safe flex justify-around items-center no-print shadow-lg">
-    <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-emerald-400 bg-emerald-500/10 active-scale">
-      <span class="text-lg leading-none">⚡</span>
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 px-1 py-1.5 pb-safe flex justify-around items-center no-print shadow-lg">
+    <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-emerald-400 bg-emerald-500/10 active-scale">
+      <span class="text-base leading-none">⚡</span>
       <span class="mt-1">Teller</span>
     </button>
-    <button onclick="switchTab('students')" id="btn-mob-students" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-slate-400 active-scale">
-      <span class="text-lg leading-none">👥</span>
+    <button onclick="switchTab('digital-card')" id="btn-mob-digital-card" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">📱</span>
+      <span class="mt-1">Digital</span>
+    </button>
+    <button onclick="switchTab('students')" id="btn-mob-students" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">👥</span>
       <span class="mt-1">Nasabah</span>
     </button>
-    <button onclick="switchTab('passbook')" id="btn-mob-passbook" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-slate-400 active-scale">
-      <span class="text-lg leading-none">📖</span>
-      <span class="mt-1">Passbook</span>
+    <button onclick="switchTab('passbook')" id="btn-mob-passbook" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">📖</span>
+      <span class="mt-1">Buku</span>
     </button>
-    <button onclick="switchTab('card')" id="btn-mob-card" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-slate-400 active-scale">
-      <span class="text-lg leading-none">💳</span>
-      <span class="mt-1">Kartu PVC</span>
+    <button onclick="switchTab('card')" id="btn-mob-card" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">💳</span>
+      <span class="mt-1">PVC</span>
     </button>
-    <button onclick="switchTab('reports')" id="btn-mob-reports" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-slate-400 active-scale">
-      <span class="text-lg leading-none">📊</span>
+    <button onclick="switchTab('reports')" id="btn-mob-reports" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">📊</span>
       <span class="mt-1">Laporan</span>
     </button>
-    <button onclick="switchTab('design')" id="btn-mob-design" class="mob-nav-tab flex flex-col items-center py-1 px-2 rounded-xl text-[10px] font-bold text-slate-400 active-scale">
-      <span class="text-lg leading-none">🎨</span>
+    <button onclick="switchTab('design')" id="btn-mob-design" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 active-scale">
+      <span class="text-base leading-none">🎨</span>
       <span class="mt-1">Desain</span>
     </button>
   </nav>
@@ -331,8 +329,41 @@
       </div>
     </div>
 
+    <!-- TAB BARU: DIGITAL ID CARD (KARTU DIGITAL) -->
+    <div id="tab-digital-card" class="tab-content space-y-6 hidden">
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">📱 Kartu Pelajar & Tabungan Digital</h2>
+            <p class="text-xs text-slate-500">Kartu digital interaktif dapat diakses siswa melalui smartphone atau diunduh sebagai gambar PNG.</p>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button onclick="downloadDigitalCardImage()" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+              💾 Unduh Kartu Digital (PNG)
+            </button>
+            <button onclick="openWhatsAppModal(document.getElementById('digital-student-select').value)" class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 active-scale text-white font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+              💬 Kirim ke WA Wali
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
+          <select id="digital-student-select" onchange="renderDigitalCard()" class="max-w-md w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none">
+          </select>
+        </div>
+      </div>
+
+      <!-- Wrapper Pratinjau Kartu Digital -->
+      <div class="flex justify-center py-4">
+        <div id="digital-card-preview-wrapper" class="digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- TAB 2: TELLER & SCANNER BARCODE KAMERA -->
-    <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6">
+    <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div class="lg:col-span-2 space-y-4 sm:space-y-6">
           <!-- Card & Camera Scanner Box -->
@@ -592,7 +623,7 @@
             </div>
 
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Tema Warna Sampul Buku</label>
+              <label class="block font-bold text-slate-700 mb-1">Tema Warna Sampul Buku & Kartu</label>
               <div class="grid grid-cols-4 gap-2">
                 <button onclick="setTheme('theme-green')" class="py-2.5 bg-emerald-800 text-amber-300 font-bold rounded-lg text-[10px] border border-amber-400 shadow-sm active-scale transition">Hijau Emas</button>
                 <button onclick="setTheme('theme-blue')" class="py-2.5 bg-blue-900 text-blue-200 font-bold rounded-lg text-[10px] border border-blue-400 shadow-sm active-scale transition">Biru Modern</button>
@@ -721,8 +752,8 @@
       <button onclick="closeWhatsAppModal()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600 font-bold text-base p-1">✕</button>
 
       <div>
-        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">💬 Kirim Slip Gambar WhatsApp</h3>
-        <p class="text-xs text-slate-500">Kirim slip resmi transaksi dalam bentuk gambar PNG tanpa teks ke WhatsApp Wali.</p>
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">💬 Kirim Slip / Kartu ke WhatsApp</h3>
+        <p class="text-xs text-slate-500">Kirim slip transaksi atau kartu digital resmi dalam bentuk gambar PNG ke WhatsApp Wali.</p>
       </div>
 
       <div class="space-y-3">
@@ -732,16 +763,16 @@
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Pratinjau Slip Gambar PNG</label>
+          <label class="block font-bold text-slate-700 mb-1">Pratinjau Gambar PNG</label>
           <div id="wa-image-preview-container" class="border border-slate-200 rounded-xl p-2 bg-slate-50 flex justify-center items-center min-h-[160px]">
-            <p class="text-slate-400 italic text-[11px]">Memuat gambar slip...</p>
+            <p class="text-slate-400 italic text-[11px]">Memuat gambar...</p>
           </div>
         </div>
       </div>
 
       <div class="pt-2 flex flex-col gap-2">
         <button onclick="sendWhatsAppMessage()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 active-scale text-white font-extrabold rounded-xl shadow transition flex items-center justify-center gap-2 text-xs">
-          🚀 Kirim Slip Gambar ke WhatsApp
+          🚀 Kirim Gambar ke WhatsApp
         </button>
         <div class="flex gap-2">
           <button onclick="copyReceiptImageToClipboard()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition text-xs">
@@ -873,7 +904,7 @@
     </div>
   </div>
 
-  <!-- Canvas Tersembunyi untuk Melakukan Render Slip Gambar PNG -->
+  <!-- Canvas Tersembunyi untuk Melakukan Render Slip / Kartu Gambar PNG -->
   <canvas id="receipt-canvas" class="hidden"></canvas>
 
   <!-- Container Toast Notification -->
@@ -891,9 +922,9 @@
         const docEl = document.documentElement;
         if (docEl.requestFullscreen) {
           docEl.requestFullscreen();
-        } else if (docEl.webkitRequestFullscreen) { /* Safari */
+        } else if (docEl.webkitRequestFullscreen) {
           docEl.webkitRequestFullscreen();
-        } else if (docEl.msRequestFullscreen) { /* IE11 */
+        } else if (docEl.msRequestFullscreen) {
           docEl.msRequestFullscreen();
         }
         if (btn) btn.innerHTML = '🗗 <span class="hidden lg:inline">Exit Full</span>';
@@ -901,9 +932,9 @@
       } else {
         if (document.exitFullscreen) {
           document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) { /* Safari */
+        } else if (document.webkitExitFullscreen) {
           document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE11 */
+        } else if (document.msExitFullscreen) {
           document.msExitFullscreen();
         }
         if (btn) btn.innerHTML = '⛶ <span class="hidden lg:inline">Full Screen</span>';
@@ -911,7 +942,6 @@
       }
     }
 
-    // Deteksi event perubahan status Full Screen (misal pengguna tekan tombol Esc)
     document.addEventListener('fullscreenchange', handleFullScreenChange);
     document.addEventListener('webkitfullscreenchange', handleFullScreenChange);
     document.addEventListener('msfullscreenchange', handleFullScreenChange);
@@ -1135,7 +1165,10 @@
         if (savedStudents) students = JSON.parse(savedStudents);
         if (savedTx) transactions = JSON.parse(savedTx);
         if (savedDesign) designConfig = Object.assign(designConfig, JSON.parse(savedDesign));
-        if (savedLogo) institutionLogoBase64 = savedLogo;
+        if (savedLogo) {
+          institutionLogoBase64 = savedLogo;
+          applyHeaderLogo(institutionLogoBase64);
+        }
         if (savedTheme) currentTheme = savedTheme;
         if (savedGasUrl) {
           gasWebAppUrl = savedGasUrl;
@@ -1157,6 +1190,27 @@
         localStorage.setItem('tabungku_gas_url', gasWebAppUrl);
       } catch (e) {
         console.error('Storage save error:', e);
+      }
+    }
+
+    function applyHeaderLogo(base64) {
+      const imgHeader = document.getElementById('header-logo-img');
+      const placeholderHeader = document.getElementById('header-logo-placeholder');
+      const imgPreview = document.getElementById('logo-preview-img');
+      const placeholderPreview = document.getElementById('logo-preview-placeholder');
+
+      if (base64) {
+        if (imgHeader) {
+          imgHeader.src = base64;
+          imgHeader.classList.remove('hidden');
+        }
+        if (placeholderHeader) placeholderHeader.classList.add('hidden');
+
+        if (imgPreview) {
+          imgPreview.src = base64;
+          imgPreview.classList.remove('hidden');
+        }
+        if (placeholderPreview) placeholderPreview.classList.add('hidden');
       }
     }
 
@@ -1215,6 +1269,7 @@
           saveToStorage();
           renderPassbook();
           renderIDCard();
+          renderDigitalCard();
           renderStudentsTable();
           updateTransactionDropdowns();
           showToast('Data berhasil disinkronkan!');
@@ -1268,18 +1323,18 @@
       if (file) {
         compressImage(file, 200, 200, 0.8, (compressedBase64) => {
           institutionLogoBase64 = compressedBase64;
-          const imgPreview = document.getElementById('logo-preview-img');
-          const placeholder = document.getElementById('logo-preview-placeholder');
-          imgPreview.src = institutionLogoBase64;
-          imgPreview.classList.remove('hidden');
-          placeholder.classList.add('hidden');
+          applyHeaderLogo(institutionLogoBase64);
 
-          document.getElementById('preview-logo-container').innerHTML = `<img src="${institutionLogoBase64}" class="w-full h-full object-contain">`;
+          const previewContainer = document.getElementById('preview-logo-container');
+          if (previewContainer) {
+            previewContainer.innerHTML = `<img src="${institutionLogoBase64}" class="w-full h-full object-contain">`;
+          }
           
           saveToStorage();
           renderPassbook();
           renderIDCard();
-          showToast('Logo lembaga berhasil diunggah');
+          renderDigitalCard();
+          showToast('Logo lembaga & aplikasi berhasil diunggah');
         });
       }
     }
@@ -1287,10 +1342,13 @@
     function setTheme(themeName) {
       currentTheme = themeName;
       const previewBox = document.getElementById('design-preview-box');
-      previewBox.className = `passbook-bank-sheet ${currentTheme} rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-amber-400/30 scale-90 origin-top`;
+      if (previewBox) {
+        previewBox.className = `passbook-bank-sheet ${currentTheme} rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-amber-400/30 scale-90 origin-top`;
+      }
       saveToStorage();
       renderPassbook();
       renderIDCard();
+      renderDigitalCard();
     }
 
     function updateDesignSettings() {
@@ -1305,12 +1363,15 @@
       designConfig.rule2 = document.getElementById('design-rule-2')?.value || '2. Apabila menemukan kartu ini, harap mengembalikan ke pihak sekolah.';
       designConfig.rule3 = document.getElementById('design-rule-3')?.value || '3. Dilarang menyalahgunakan kartu untuk transaksi di luar ketentuan.';
 
-      document.getElementById('preview-bank-name').innerText = designConfig.bankName;
-      document.getElementById('preview-school-name').innerText = designConfig.schoolName;
+      const pBank = document.getElementById('preview-bank-name');
+      const pSchool = document.getElementById('preview-school-name');
+      if (pBank) pBank.innerText = designConfig.bankName;
+      if (pSchool) pSchool.innerText = designConfig.schoolName;
 
       saveToStorage();
       renderPassbook();
       renderIDCard();
+      renderDigitalCard();
     }
 
     /* -------------------------------------------------------------------------- */
@@ -1335,7 +1396,8 @@
         el.classList.add('text-slate-400');
       });
 
-      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+      const targetTab = document.getElementById(`tab-${tabName}`);
+      if (targetTab) targetTab.classList.remove('hidden');
       
       const activeBtn = document.getElementById(`btn-tab-${tabName}`);
       if (activeBtn) {
@@ -1349,6 +1411,7 @@
       }
 
       if (tabName === 'passbook') renderPassbook();
+      if (tabName === 'digital-card') renderDigitalCard();
       if (tabName === 'card') renderIDCard();
       if (tabName === 'students') renderStudentsTable();
       if (tabName === 'transaction') updateTransactionDropdowns();
@@ -1357,6 +1420,119 @@
 
     function triggerPrint() {
       window.print();
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* DIGITAL CARD RENDERER & DOWNLOAD                                           */
+    /* -------------------------------------------------------------------------- */
+    function renderDigitalCard() {
+      const select = document.getElementById('digital-student-select');
+      const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
+      
+      if (!select) return;
+      if (select.options.length !== activeStudents.length) {
+        select.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
+      }
+
+      const selectedId = select.value || (activeStudents[0] && activeStudents[0].id);
+      const student = activeStudents.find(s => s.id === selectedId) || activeStudents[0];
+
+      if (!student) return;
+
+      const logoHtml = institutionLogoBase64 
+        ? `<img src="${institutionLogoBase64}" class="w-8 h-8 object-contain">`
+        : `<span class="text-2xl">🏫</span>`;
+
+      const barcodeSvg = generateBarcodeSVG(student.nis);
+      const wrapper = document.getElementById('digital-card-preview-wrapper');
+      
+      wrapper.className = `digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl ${currentTheme}`;
+      
+      wrapper.innerHTML = `
+        <div class="flex items-center justify-between border-b border-white/20 pb-2">
+          <div class="flex items-center gap-2.5">
+            ${logoHtml}
+            <div>
+              <h4 class="font-bank-title text-xs font-extrabold tracking-wide leading-tight">${designConfig.bankName}</h4>
+              <p class="text-[9px] opacity-80 uppercase leading-none">${designConfig.schoolName}</p>
+            </div>
+          </div>
+          <span class="text-[9px] font-mono bg-white/20 px-2 py-0.5 rounded font-bold">${designConfig.cardTag || 'SMART CARD'}</span>
+        </div>
+
+        <div class="flex items-center gap-3.5 my-2">
+          <div class="w-16 h-20 rounded-xl border-2 border-white/50 overflow-hidden bg-white/20 shadow-inner flex-shrink-0">
+            <img src="${student.avatar}" class="w-full h-full object-cover">
+          </div>
+          <div class="text-xs space-y-1 text-white flex-1 min-w-0">
+            <p class="text-[9px] opacity-75 font-mono">${designConfig.cardTitle || 'KARTU TANDA PELAJAR'}</p>
+            <p class="font-bold text-sm leading-tight uppercase tracking-tight truncate">${student.name}</p>
+            <p class="font-mono text-xs font-bold text-amber-300">NIS: ${student.nis}</p>
+            <p class="text-[10px] font-semibold bg-black/30 px-2 py-0.5 rounded inline-block border border-white/10 truncate">${student.class}</p>
+          </div>
+        </div>
+
+        <div class="border-t border-white/20 pt-2 flex justify-between items-end">
+          <div class="bg-white p-1.5 rounded w-36">
+            ${barcodeSvg}
+            <p class="text-[7px] text-slate-800 text-center font-mono font-bold mt-0.5">NIS: ${student.nis}</p>
+          </div>
+          <div class="text-right font-mono">
+            <p class="text-[8px] opacity-75">NO. REKENING</p>
+            <p class="font-black text-xs tracking-wider">${student.accountNo}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadDigitalCardImage() {
+      const select = document.getElementById('digital-student-select');
+      const student = students.find(s => s.id === select.value);
+      if (!student) return;
+
+      const canvas = document.getElementById('receipt-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1014;
+      canvas.height = 640;
+
+      // Render background gradient
+      ctx.fillStyle = '#064e3b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 28px "Cinzel", serif';
+      ctx.fillText(designConfig.bankName, 100, 60);
+      ctx.font = '16px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText(designConfig.schoolName.toUpperCase(), 100, 90);
+
+      ctx.font = 'bold 18px monospace';
+      ctx.fillStyle = '#fde047';
+      ctx.fillText(designConfig.cardTitle || 'KARTU TANDA PELAJAR', 100, 160);
+
+      ctx.font = 'bold 36px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(student.name.toUpperCase(), 300, 240);
+
+      ctx.font = 'bold 22px monospace';
+      ctx.fillStyle = '#fde047';
+      ctx.fillText(`NIS: ${student.nis}`, 300, 285);
+
+      ctx.font = 'bold 20px monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(`Kls: ${student.class}`, 300, 325);
+
+      ctx.font = '16px monospace';
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillText('NO. REKENING TABUNGAN:', 300, 420);
+      ctx.font = 'bold 24px monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(student.accountNo, 300, 455);
+
+      const link = document.createElement('a');
+      link.download = `KartuDigital_${student.nis}_${student.name.replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Kartu Digital berhasil diunduh dalam format PNG!');
     }
 
     /* -------------------------------------------------------------------------- */
@@ -1576,6 +1752,7 @@
       const select = document.getElementById('card-student-select');
       const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
       
+      if (!select) return;
       if (select.options.length !== activeStudents.length) {
         select.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class}</option>`).join('');
       }
@@ -1753,22 +1930,20 @@
 
     function updateTransactionDropdowns() {
       const select = document.getElementById('tx-student-id');
+      if (!select) return;
       const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
       select.innerHTML = activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class} (${formatRupiah(s.balance)})</option>`).join('');
       updateActiveStudentPreview();
     }
 
     function updateActiveStudentPreview() {
-      const selectId = document.getElementById('tx-student-id').value;
+      const selectId = document.getElementById('tx-student-id')?.value;
       const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
       const student = activeStudents.find(s => s.id === selectId) || activeStudents[0];
       const previewBox = document.getElementById('active-student-preview');
       const recentBox = document.getElementById('recent-transactions-list');
 
-      if (!student) {
-        previewBox.innerHTML = '<p class="text-slate-400">Belum ada siswa terpilih</p>';
-        return;
-      }
+      if (!student || !previewBox) return;
 
       const waBtnHtml = `
         <button onclick="openWhatsAppModal('${student.id}')" title="Kirim Pesan WA ke Wali" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active-scale text-white font-bold rounded-xl text-[11px] transition flex items-center gap-1 shadow">
@@ -2205,6 +2380,8 @@
       const startIndex = (currentPage - 1) * itemsPerPage;
       const paginatedItems = filtered.slice(startIndex, startIndex + itemsPerPage);
 
+      if (!tbody) return;
+
       if (paginatedItems.length === 0) {
         tbody.innerHTML = `
           <tr>
@@ -2235,14 +2412,14 @@
           <td class="p-3 font-black text-emerald-600 text-sm">${formatRupiah(s.balance)}</td>
           <td class="p-3 text-center">
             <div class="flex items-center justify-center gap-1.5">
-              <button onclick="openWhatsAppModal('${s.id}')" title="Kirim Slip / Info Saldo WA" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 active-scale text-white font-bold rounded-lg text-xs transition">
-                💬 WA
+              <button onclick="selectStudentForDigitalCard('${s.id}')" title="Lihat Kartu Digital" class="px-2 py-1 bg-blue-600 hover:bg-blue-500 active-scale text-white font-bold rounded-lg text-xs transition">
+                📱 Digital
               </button>
               <button onclick="selectStudentForPassbook('${s.id}')" title="Cetak Buku Tabungan" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 active-scale text-emerald-700 font-bold rounded-lg text-xs transition border border-emerald-200">
                 📖 Buku
               </button>
-              <button onclick="selectStudentForCard('${s.id}')" title="Cetak Kartu Pelajar PVC" class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 active-scale text-blue-700 font-bold rounded-lg text-xs transition border border-blue-200">
-                💳 Kartu
+              <button onclick="selectStudentForCard('${s.id}')" title="Cetak Kartu Pelajar PVC" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 active-scale text-slate-700 font-bold rounded-lg text-xs transition">
+                💳 PVC
               </button>
               <button onclick="editStudent('${s.id}')" title="Edit Data Siswa" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 active-scale text-slate-700 font-bold rounded-lg text-xs transition">
                 ✏️
@@ -2260,8 +2437,11 @@
 
     function renderPaginationControls(totalData, totalPages) {
       let navContainer = document.getElementById('student-pagination-nav');
+      const tbody = document.getElementById('student-table-body');
+      if (!tbody) return;
+
       if (!navContainer) {
-        const parent = document.getElementById('student-table-body').closest('.bg-white');
+        const parent = tbody.closest('.bg-white');
         navContainer = document.createElement('div');
         navContainer.id = 'student-pagination-nav';
         navContainer.className = 'flex items-center justify-between pt-4 text-xs text-slate-500 font-bold border-t border-slate-100 mt-4';
@@ -2291,16 +2471,31 @@
       };
     }
 
+    function selectStudentForDigitalCard(id) {
+      switchTab('digital-card');
+      const select = document.getElementById('digital-student-select');
+      if (select) {
+        select.value = id;
+        renderDigitalCard();
+      }
+    }
+
     function selectStudentForPassbook(id) {
       switchTab('passbook');
-      document.getElementById('passbook-student-select').value = id;
-      renderPassbook();
+      const select = document.getElementById('passbook-student-select');
+      if (select) {
+        select.value = id;
+        renderPassbook();
+      }
     }
 
     function selectStudentForCard(id) {
       switchTab('card');
-      document.getElementById('card-student-select').value = id;
-      renderIDCard();
+      const select = document.getElementById('card-student-select');
+      if (select) {
+        select.value = id;
+        renderIDCard();
+      }
     }
 
     function openModalNewStudent() {
@@ -2466,6 +2661,7 @@
       saveToStorage();
       closeModalNewStudent();
       renderStudentsTable();
+      renderDigitalCard();
       updateTransactionDropdowns();
     }
 
@@ -2494,6 +2690,8 @@
       });
 
       const tbody = document.getElementById('report-class-table-body');
+      if (!tbody) return;
+
       tbody.innerHTML = Object.keys(classMap).map(className => {
         const item = classMap[className];
         const avg = item.count > 0 ? item.balance / item.count : 0;
@@ -2542,10 +2740,10 @@
       updateDesignSettings();
       renderPassbook();
       renderIDCard();
+      renderDigitalCard();
       renderStudentsTable();
       updateTransactionDropdowns();
 
-      // Inisialisasi default tab untuk Android (Teller Tab) jika dibuka dari smartphone
       if (window.innerWidth < 768) {
         switchTab('transaction');
       }
