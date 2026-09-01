@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
-  <title>TabungKu Smart Banking - Perbankan & POS Perdagangan Sekolah</title>
+  <title>TabungKu Smart Banking - Multi-User System</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -65,481 +65,733 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col pb-20 md:pb-0">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col pb-0">
 
-  <!-- HEADER NAVIGATION -->
-  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-md pt-safe no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <div class="flex items-center gap-2.5">
-          <div id="header-logo-wrapper" class="bg-emerald-500 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale overflow-hidden p-1" onclick="switchTab('pos')">
-            <img id="header-logo-img" src="" class="w-full h-full object-contain hidden">
-            <span id="header-logo-placeholder" class="text-lg">🛒</span>
-          </div>
-          <div>
-            <h1 class="text-base sm:text-lg font-bold leading-none text-white flex items-center gap-1.5">
-              Tabung<span class="text-emerald-400">Ku</span> Smart Banking
-            </h1>
-            <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5">Sistem Perbankan & POS Kasir Perdagangan</p>
-          </div>
+  <!-- LAYAR LOGIN MULTI-USER -->
+  <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 text-white">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center text-3xl mx-auto shadow-lg shadow-emerald-500/20">
+          🛒
+        </div>
+        <h1 class="text-xl font-black text-white tracking-tight">Tabung<span class="text-emerald-400">Ku</span> Smart Banking</h1>
+        <p class="text-xs text-slate-400">Masuk dengan Username & Password Akun Anda</p>
+      </div>
+
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-bold text-slate-300 mb-1.5">Username Pengguna</label>
+          <input type="text" id="login-username" required placeholder="Ketik username..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white font-semibold outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-300 mb-1.5">Password</label>
+          <input type="password" id="login-password" required placeholder="Ketik password..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-3 text-white font-semibold outline-none focus:border-emerald-500">
         </div>
 
-        <div class="flex items-center gap-2">
-          <button onclick="toggleAudio()" id="btn-sound-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700">🔊 ON</button>
-          <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
-            <span class="text-slate-400">Total Kas:</span>
-            <span id="header-total-balance" class="font-extrabold text-emerald-400">Rp 0</span>
-          </div>
-          <button onclick="openModalNewStudent()" class="px-3 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl flex items-center gap-1 shadow">➕ Siswa</button>
+        <button type="submit" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-950 font-black text-xs rounded-xl shadow-lg uppercase tracking-wider">
+          🚀 Masuk Ke Sistem
+        </button>
+      </form>
+
+      <div class="border-t border-slate-800 pt-4 text-[11px] text-slate-400 space-y-2">
+        <p class="font-bold text-slate-300">Akun Bawaan Sistem (Default):</p>
+        <div class="grid grid-cols-1 gap-1 bg-slate-800/60 p-2.5 rounded-xl font-mono text-[10px]">
+          <div>🔑 Admin: <span class="text-emerald-400">admin / 123</span></div>
+          <div>🍔 Kantin: <span class="text-amber-400">kantin / 123</span></div>
+          <div>🔍 Cek Saldo Mandiri: <span class="text-blue-400">siswa / 123</span></div>
         </div>
+        <button onclick="resetDefaultAccounts()" class="w-full text-center text-[10px] text-amber-400 hover:underline pt-1">
+          🔄 Lupa Password / Reset Akun ke Default Factory
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- SUB-NAV DESKTOP -->
-    <div class="hidden md:block bg-slate-800 border-t border-slate-700/60 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto">
-        <button onclick="switchTab('pos')" id="btn-tab-pos" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">🛒 POS Kasir Perdagangan</button>
-        <button onclick="switchTab('transaction')" id="btn-tab-transaction" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">⚡ Teller Bank</button>
-        <button onclick="switchTab('check-balance')" id="btn-tab-check-balance" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🔍 Scan Cek Saldo</button>
-        <button onclick="switchTab('digital-card')" id="btn-tab-digital-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">📱 Kartu Digital</button>
-        <button onclick="switchTab('design')" id="btn-tab-design" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🎨 Editor Desain</button>
-        <button onclick="switchTab('students')" id="btn-tab-students" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">👥 Nasabah</button>
-        <button onclick="switchTab('passbook')" id="btn-tab-passbook" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">📖 Cetak Buku</button>
-        <button onclick="switchTab('card')" id="btn-tab-card" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">💳 Cetak PVC</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- BOTTOM NAV MOBILE -->
-  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 px-1 py-1.5 pb-safe flex justify-around items-center no-print shadow-lg">
-    <button onclick="switchTab('pos')" id="btn-mob-pos" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-emerald-400 bg-emerald-500/10">🛒<span class="mt-1">POS Toko</span></button>
-    <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">⚡<span class="mt-1">Teller</span></button>
-    <button onclick="switchTab('check-balance')" id="btn-mob-check-balance" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">🔍<span class="mt-1">Cek Saldo</span></button>
-    <button onclick="switchTab('digital-card')" id="btn-mob-digital-card" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">📱<span class="mt-1">Digital</span></button>
-    <button onclick="switchTab('students')" id="btn-mob-students" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">👥<span class="mt-1">Nasabah</span></button>
-  </nav>
-
-  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
-
-    <!-- TAB: POS KASIR TRANSAKSI PERDAGANGAN -->
-    <div id="tab-pos" class="tab-content space-y-4 sm:space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        
-        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-          <!-- FORM INPUT BARANG -->
-          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div class="border-b pb-3">
-              <h2 class="text-base sm:text-lg font-bold text-slate-900">📝 Form Transaksi Barang / Perdagangan</h2>
-              <p class="text-xs text-slate-500">Masukkan nama barang, harga satuan, dan jumlah item untuk transaksi toko/kantin.</p>
+  <!-- APLIKASI UTAMA (SETELAH LOGIN) -->
+  <div id="app-content" class="hidden flex-1 flex flex-col min-h-screen">
+    <!-- HEADER NAVIGATION (DISEMBUNYIKAN SEPENUHNYA UNTUK USER SISWA) -->
+    <header id="main-header" class="bg-slate-900 text-white sticky top-0 z-30 shadow-md pt-safe no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-2.5">
+            <div id="header-logo-wrapper" class="bg-emerald-500 rounded-xl text-slate-900 shadow-lg font-bold text-lg flex items-center justify-center w-10 h-10 cursor-pointer active-scale overflow-hidden p-1" onclick="handleLogoClick()">
+              <img id="header-logo-img" src="" class="w-full h-full object-contain hidden">
+              <span id="header-logo-placeholder" class="text-lg">🛒</span>
             </div>
+            <div>
+              <h1 class="text-base sm:text-lg font-bold leading-none text-white flex items-center gap-1.5">
+                Tabung<span class="text-emerald-400">Ku</span> Smart Banking
+              </h1>
+              <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5" id="header-system-subtitle">Sistem Kasir Kantin Sekolah</p>
+            </div>
+          </div>
 
-            <form onsubmit="handlePosAddItem(event)" class="space-y-4 text-xs">
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="sm:col-span-1">
-                  <label class="block font-bold text-slate-700 mb-1">Nama Barang / Produk</label>
-                  <input type="text" id="pos-item-name" required placeholder="Contoh: Seragam / Nasi Goreng" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                  <label class="block font-bold text-slate-700 mb-1">Harga Satuan (Rp)</label>
-                  <input type="number" id="pos-item-price" required min="100" step="100" placeholder="Contoh: 15000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                  <label class="block font-bold text-slate-700 mb-1">Jumlah (Qty)</label>
-                  <input type="number" id="pos-item-qty" required min="1" value="1" placeholder="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
-                </div>
+          <div class="flex items-center gap-2">
+            <!-- PROFILE INFO & LOGOUT -->
+            <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700/80 rounded-xl px-2.5 py-1.5">
+              <div class="text-right text-[10px]">
+                <p class="font-bold text-white leading-none" id="user-display-name">Admin</p>
+                <span class="text-[9px] font-mono text-emerald-400 font-semibold" id="user-display-role">ADMIN</span>
               </div>
-              <button type="submit" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs rounded-xl shadow active-scale flex items-center justify-center gap-2">
-                ➕ Tambahkan Barang ke Daftar Transaksi
+              <button onclick="handleLogout()" title="Keluar / Logout" class="px-2 py-1 bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white rounded-lg text-xs font-bold active-scale transition border border-red-500/30">
+                🚪 Logout
               </button>
-            </form>
-          </div>
-
-          <!-- TABEL DAFTAR RINCIAN TRANSAKSI PERDAGANGAN -->
-          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h3 class="font-bold text-slate-900 text-sm border-b pb-2 flex justify-between items-center">
-              <span>🛒 Rincian Barang Transaksi</span>
-              <button onclick="clearPosCart()" class="text-xs text-red-500 hover:underline">Reset Form Barang</button>
-            </h3>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
-                    <th class="p-2.5">Nama Barang</th>
-                    <th class="p-2.5 text-center">Harga Satuan</th>
-                    <th class="p-2.5 text-center">Jumlah (Qty)</th>
-                    <th class="p-2.5 text-right">Subtotal</th>
-                    <th class="p-2.5 text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="pos-cart-body" class="divide-y divide-slate-100">
-                  <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada barang yang dimasukkan</td></tr>
-                </tbody>
-              </table>
             </div>
 
-            <div class="flex justify-between items-center bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-emerald-950 font-bold">
-              <span>TOTAL TRANSAKSI PERDAGANGAN:</span>
-              <span id="pos-cart-total" class="text-xl font-black text-emerald-700">Rp 0</span>
+            <button onclick="toggleAudio()" id="btn-sound-toggle" class="p-2 bg-slate-800 hover:bg-slate-700 active-scale text-slate-300 rounded-xl text-xs border border-slate-700">🔊 ON</button>
+            
+            <!-- HANYA MUNCUL DI MODE ADMIN UTAMA -->
+            <div id="header-total-balance-wrapper" class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700 rounded-xl px-3 py-1.5 text-xs">
+              <span class="text-slate-400">Total Kas:</span>
+              <span id="header-total-balance" class="font-extrabold text-emerald-400">Rp 0</span>
             </div>
-          </div>
-
-          <!-- RIWAYAT TRANSAKSI PERDAGANGAN -->
-          <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
-              <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-                <span>📋 Riwayat Transaksi Perdagangan & Struk</span>
-              </h3>
-              <span class="text-[10px] text-slate-400">Terupdate otomatis</span>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
-                    <th class="p-2.5">Waktu / ID</th>
-                    <th class="p-2.5">Pembayar (Siswa)</th>
-                    <th class="p-2.5">Item Barang</th>
-                    <th class="p-2.5 text-right">Total (Rp)</th>
-                    <th class="p-2.5 text-center">Aksi Slip</th>
-                  </tr>
-                </thead>
-                <tbody id="pos-history-body" class="divide-y divide-slate-100">
-                  <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada riwayat transaksi toko</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- PEMBAYARAN VIA SCANNER BARCODE KARTU SISWA -->
-        <div class="space-y-4">
-          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800 sticky top-20">
-            <div>
-              <h3 class="font-bold text-sm text-white flex items-center gap-1.5">💳 Pemindai Pembayaran Siswa</h3>
-              <p class="text-[10px] text-slate-400 mt-0.5">Scan Barcode / QR Kartu Pelajar untuk memotong saldo tabungan secara otomatis.</p>
-            </div>
-
-            <div class="space-y-2">
-              <button onclick="togglePosCameraScanner()" id="btn-pos-camera-toggle" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow">📷 Buka Kamera Scan Kartu</button>
-              
-              <div id="pos-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
-                <div id="pos-qr-reader" class="w-full"></div>
-              </div>
-
-              <div class="flex gap-2 pt-2">
-                <input type="text" id="pos-scan-input" onkeypress="if(event.key==='Enter') processPosPayment()" placeholder="Scan Barcode / Ketik NIS..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-mono outline-none">
-                <button onclick="processPosPayment()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Bayar</button>
-              </div>
-            </div>
-
-            <div class="border-t border-slate-800 pt-3">
-              <label class="block font-bold text-slate-300 text-[11px] mb-1">Atau Pilih Nasabah Siswa:</label>
-              <select id="pos-student-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 font-bold text-xs text-white outline-none"></select>
-            </div>
-
-            <button onclick="processPosPayment()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg active-scale">
-              ⚡ Konfirmasi Bayar Pakai Saldo
-            </button>
+            <button id="btn-admin-add-student" onclick="openModalNewStudent()" class="hidden px-3 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl flex items-center gap-1 shadow">➕ Siswa</button>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 2: TELLER BANK -->
-    <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6 hidden">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
-          <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-bold text-sm text-white flex items-center gap-2">
-                  <span>📷 Pemindai Barcode Transaksi</span>
-                  <span id="scan-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SIAP SCAN</span>
-                </h3>
-              </div>
-              <button onclick="toggleCameraScanner()" id="btn-camera-toggle" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 text-xs font-extrabold rounded-xl shadow">📷 Buka Kamera</button>
-            </div>
-
-            <div id="camera-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
-              <div id="qr-reader" class="w-full"></div>
-            </div>
-
-            <div class="flex gap-2">
-              <input type="text" id="scan-input" onkeypress="handleScanKeyPress(event)" placeholder="Scan Barcode Kartu / Ketik NIS / No Rekening..." class="flex-1 bg-slate-800 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-xs text-white font-mono outline-none">
-              <button onclick="handleScanCard()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Proses Scan</button>
-            </div>
-          </div>
-
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm space-y-4">
-            <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Form Transaksi Teller</h2>
-            <form onsubmit="handleTransactionSubmit(event)" class="space-y-4 text-xs">
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Jenis Transaksi</label>
-                <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none">
-                  <option value="DEPOSIT">📥 SETOR TUNAI</option>
-                  <option value="WITHDRAWAL">📤 PENARIKAN TUNAI</option>
-                </select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Pilih Siswa (Terpilih Otomatis Saat Scan)</label>
-                <select id="tx-student-id" onchange="updateActiveStudentPreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none"></select>
-              </div>
-              <div>
-                <label class="block font-bold text-slate-700 mb-1">Nominal Transaksi (Rp)</label>
-                <input type="number" id="tx-amount" required min="1000" step="1000" placeholder="Contoh: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-base font-bold text-emerald-700 outline-none">
-              </div>
-              <button type="submit" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg">⚡ Simpan & Eksekusi Transaksi</button>
-            </form>
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
-            <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Informasi Rekening Aktif</h3>
-            <div id="active-student-preview" class="space-y-3"></div>
-          </div>
+      <!-- SUB-NAV DESKTOP -->
+      <div id="desktop-subnav-wrapper" class="hidden md:block bg-slate-800 border-t border-slate-700/60 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex space-x-2 py-2 overflow-x-auto">
+          <button onclick="switchTab('pos')" id="btn-tab-pos" class="nav-tab nav-kantin-allow px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🛒 POS Kasir Kantin</button>
+          <button onclick="switchTab('check-balance')" id="btn-tab-check-balance" class="nav-tab px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50">🔍 Scan Cek Saldo</button>
+          
+          <!-- NAV DENGAN HAK AKSES ADMIN ONLY -->
+          <button onclick="switchTab('users')" id="btn-tab-users" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">⚙️ Pengelolaan User</button>
+          <button onclick="switchTab('transaction')" id="btn-tab-transaction" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">⚡ Teller Bank</button>
+          <button onclick="switchTab('digital-card')" id="btn-tab-digital-card" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">📱 Kartu Digital</button>
+          <button onclick="switchTab('design')" id="btn-tab-design" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">🎨 Editor Desain</button>
+          <button onclick="switchTab('students')" id="btn-tab-students" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">👥 Nasabah</button>
+          <button onclick="switchTab('passbook')" id="btn-tab-passbook" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">📖 Cetak Buku</button>
+          <button onclick="switchTab('card')" id="btn-tab-card" class="nav-tab nav-admin-only px-4 py-2 rounded-lg text-xs font-bold text-slate-300 hover:bg-slate-700/50 hidden">💳 Cetak PVC</button>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- TAB 3: SCAN BARCODE CEK SALDO MANDIRI -->
-    <div id="tab-check-balance" class="tab-content space-y-6 hidden no-print">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6 max-w-2xl mx-auto">
-        <div class="text-center space-y-1">
-          <span class="text-3xl">🔍</span>
-          <h2 class="text-lg font-bold text-slate-900">Scan Barcode / Cek Saldo Mandiri</h2>
-          <p class="text-xs text-slate-500">Scan barcode kartu pelajar atau ketik NIS / No. Rekening untuk mengecek sisa saldo tabungan siswa.</p>
-        </div>
+    <!-- BOTTOM NAV MOBILE -->
+    <nav id="mobile-bottomnav-wrapper" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 z-40 px-1 py-1.5 pb-safe flex justify-around items-center no-print shadow-lg">
+      <button onclick="switchTab('pos')" id="btn-mob-pos" class="mob-nav-tab mob-kantin-allow flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">🛒<span class="mt-1">POS Kantin</span></button>
+      <button onclick="switchTab('check-balance')" id="btn-mob-check-balance" class="mob-nav-tab flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400">🔍<span class="mt-1">Cek Saldo</span></button>
+      
+      <!-- MOBILE NAV DENGAN ROLE ADMIN ONLY -->
+      <button onclick="switchTab('users')" id="btn-mob-users" class="mob-nav-tab mob-admin-only flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 hidden">⚙️<span class="mt-1">User</span></button>
+      <button onclick="switchTab('students')" id="btn-mob-students" class="mob-nav-tab mob-admin-only flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 hidden">👥<span class="mt-1">Nasabah</span></button>
+      <button onclick="switchTab('transaction')" id="btn-mob-transaction" class="mob-nav-tab mob-admin-only flex flex-col items-center py-1 px-1.5 rounded-xl text-[9px] font-bold text-slate-400 hidden">⚡<span class="mt-1">Teller</span></button>
+    </nav>
 
-        <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 space-y-4 shadow-inner">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">📷 Pemindai Barcode Kamera</h3>
-            <button onclick="toggleBalanceCamera()" id="btn-balance-cam-toggle" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-bold rounded-xl shadow">Buka Kamera</button>
-          </div>
+    <main id="main-content-container" class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 flex flex-col justify-center">
 
-          <div id="balance-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black">
-            <div id="balance-qr-reader" class="w-full"></div>
-          </div>
-
-          <div class="flex gap-2">
-            <input type="text" id="balance-query-input" onkeypress="if(event.key==='Enter') executeBalanceCheck()" placeholder="Scan Barcode / Ketik NIS / No. Rekening..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white font-mono focus:border-emerald-500 outline-none">
-            <button onclick="executeBalanceCheck()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow active-scale">Periksa Saldo</button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1 text-xs">Atau Pilih Langsung Nama Siswa:</label>
-          <select id="balance-select-student" onchange="executeBalanceCheckSelect()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: EDITOR DESAIN KARTU -->
-    <div id="tab-design" class="tab-content space-y-6 hidden no-print">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div>
-          <h2 class="text-base sm:text-lg font-bold text-slate-900">🎨 Editor Desain & Branding Kartu ID</h2>
-          <p class="text-xs text-slate-500">Upload logo sekolah, pilih tema warna gradient, dan sesuaikan seluruh teks kartu secara real-time.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <h3 class="font-bold text-slate-800 text-sm border-b pb-2">Pengaturan Visual Instansi & Logo</h3>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Upload Logo Sekolah/Bank (JPG/PNG)</label>
-              <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl border border-slate-300 bg-white flex items-center justify-center p-1 overflow-hidden shadow-inner">
-                  <img id="logo-preview-img" src="" class="w-full h-full object-contain hidden">
-                  <span id="logo-preview-placeholder" class="text-xl">🏫</span>
+      <!-- TAB 1: POS KASIR KANTIN (TERSEMBUNYI TOTAL DARI SISWA) -->
+      <div id="tab-pos" class="tab-content space-y-4 sm:space-y-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          
+          <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div class="border-b pb-3 flex justify-between items-center">
+                <div>
+                  <h2 class="text-base sm:text-lg font-bold text-slate-900">🍔 Form Transaksi Kasir Kantin</h2>
+                  <p class="text-xs text-slate-500">Pilih menu cepat atau ketik item untuk pesanan siswa.</p>
                 </div>
-                <input type="file" id="upload-logo-input" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs bg-white border p-2 rounded-xl flex-1">
               </div>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Pilih Skema Warna Gradient Kartu</label>
-              <div class="grid grid-cols-4 gap-2">
-                <button onclick="setTheme('theme-green')" class="py-2.5 bg-emerald-800 text-white font-bold rounded-lg text-xs shadow hover:bg-emerald-700">Hijau</button>
-                <button onclick="setTheme('theme-blue')" class="py-2.5 bg-blue-900 text-white font-bold rounded-lg text-xs shadow hover:bg-blue-800">Biru</button>
-                <button onclick="setTheme('theme-maroon')" class="py-2.5 bg-red-950 text-white font-bold rounded-lg text-xs shadow hover:bg-red-900">Marun</button>
-                <button onclick="setTheme('theme-black')" class="py-2.5 bg-slate-950 text-white font-bold rounded-lg text-xs shadow hover:bg-slate-900">Hitam</button>
-              </div>
-            </div>
-            <h3 class="font-bold text-slate-800 text-sm border-b pb-2 pt-2">Teks Kartu & Legalitas Instansi</h3>
-            <div><label class="block font-bold text-slate-700 mb-1">Nama Bank / Program Sekolah</label><input type="text" id="design-bank-name" value="BANK TABUNGAN SEKOLAH" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Nama Sekolah / Lembaga Resmi</label><input type="text" id="design-school-name" value="SD NEGERI HARAPAN BANGSA" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Judul Utama Kartu Depan</label><input type="text" id="design-card-title" value="KARTU TANDA PELAJAR" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Badge Tag Kanan Atas</label><input type="text" id="design-card-tag" value="SMART CARD" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Nama Kepala Sekolah / Penandatangan</label><input type="text" id="design-headmaster" value="Drs. H. Suparna, M.Pd" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Jabatan Penandatangan</label><input type="text" id="design-signatory-title" value="Kepala Sekolah," oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 1)</label><input type="text" id="design-rule-1" value="1. Kartu ini sah sebagai Kartu Pelajar & Tabungan Bank Sekolah." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 2)</label><input type="text" id="design-rule-2" value="2. Harap dikembalikan ke pihak sekolah jika ditemukan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
-            <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 3)</label><input type="text" id="design-rule-3" value="3. Dilarang menyalahgunakan kartu untuk transaksi di luar ketentuan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
-          </div>
 
-          <div>
-            <h3 class="font-bold text-slate-800 text-sm mb-2">Pratinjau Live Sampul Buku Tabungan</h3>
-            <div id="design-preview-box" class="passbook-bank-sheet theme-green rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-white/20 scale-90 origin-top">
-              <div class="flex justify-between items-start border-b border-white/30 pb-3">
-                <div class="flex items-center gap-3">
-                  <div id="preview-logo-container" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center p-1">🏫</div>
+              <!-- PRESET MENU CEPAT KANTIN -->
+              <div class="space-y-2">
+                <div class="flex justify-between items-center">
+                  <label class="block font-bold text-slate-700 text-xs">Pilihan Menu Cepat (Quick-Keys):</label>
+                  <button type="button" onclick="openModalManageMenu()" class="text-xs text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1 active-scale">
+                    ⚙️ Kelola / Tambah Menu
+                  </button>
+                </div>
+                <div id="quick-menu-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+              </div>
+
+              <form onsubmit="handlePosAddItem(event)" class="space-y-4 text-xs pt-2 border-t border-slate-100">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div class="sm:col-span-1">
+                    <label class="block font-bold text-slate-700 mb-1">Nama Barang / Makanan Custom</label>
+                    <input type="text" id="pos-item-name" required placeholder="Contoh: Snack / Roti" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
+                  </div>
                   <div>
-                    <h1 class="font-bank-title text-xl font-extrabold" id="preview-bank-name">BANK TABUNGAN SEKOLAH</h1>
-                    <p class="text-[9px] uppercase tracking-wider" id="preview-school-name">SD NEGERI HARAPAN BANGSA</p>
+                    <label class="block font-bold text-slate-700 mb-1">Harga Satuan (Rp)</label>
+                    <input type="number" id="pos-item-price" required min="100" step="100" placeholder="Contoh: 5000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
+                  </div>
+                  <div>
+                    <label class="block font-bold text-slate-700 mb-1">Jumlah (Qty)</label>
+                    <input type="number" id="pos-item-qty" required min="1" value="1" placeholder="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none focus:border-emerald-500">
                   </div>
                 </div>
+                <button type="submit" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs rounded-xl shadow active-scale flex items-center justify-center gap-2">
+                  ➕ Tambahkan ke Daftar Belanja
+                </button>
+              </form>
+            </div>
+
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <h3 class="font-bold text-slate-900 text-sm border-b pb-2 flex justify-between items-center">
+                <span>🛒 Rincian Pesanan Kantin</span>
+                <button onclick="clearPosCart()" class="text-xs text-red-500 hover:underline">Reset Form Barang</button>
+              </h3>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
+                      <th class="p-2.5">Nama Barang</th>
+                      <th class="p-2.5 text-center">Harga Satuan</th>
+                      <th class="p-2.5 text-center">Jumlah (Qty)</th>
+                      <th class="p-2.5 text-right">Subtotal</th>
+                      <th class="p-2.5 text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pos-cart-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada barang yang dimasukkan</td></tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="text-center my-auto">
-                <h2 class="font-bank-title text-2xl font-black tracking-widest uppercase">BUKU TABUNGAN</h2>
-                <p class="text-[10px] opacity-80 mt-1">SIMPANAN PELAJAR SMART BANKING</p>
+
+              <div class="flex justify-between items-center bg-emerald-50 p-4 rounded-xl border border-emerald-200 text-emerald-950 font-bold">
+                <span>TOTAL BELANJA KANTIN:</span>
+                <span id="pos-cart-total" class="text-xl font-black text-emerald-700">Rp 0</span>
               </div>
-              <div class="border-t border-white/30 pt-3 text-xs font-mono flex justify-between">
-                <div><p class="text-[9px] opacity-75">NAMA NASABAH:</p><p class="font-bold uppercase">AHMAD RAIHAN</p></div>
-                <div class="text-right"><p class="text-[9px] opacity-75">NO. REKENING:</p><p class="font-bold">5080-01-002341-53-8</p></div>
+            </div>
+
+            <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+              <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                  <span>📋 Riwayat Transaksi Kantin & Struk</span>
+                </h3>
+                <span class="text-[10px] text-slate-400">Terupdate otomatis</span>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
+                      <th class="p-2.5">Waktu / ID</th>
+                      <th class="p-2.5">Pembayar (Siswa)</th>
+                      <th class="p-2.5">Item Barang / Tipe</th>
+                      <th class="p-2.5 text-right">Total (Rp)</th>
+                      <th class="p-2.5 text-center">Aksi Slip</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pos-history-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="5" class="text-center p-4 text-slate-400">Belum ada riwayat transaksi toko</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- AREA SCANNER & PEMBAYARAN POS DENGAN SCANNER ISI SALDO -->
+          <div class="space-y-4">
+            <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800 sticky top-20">
+              <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                <div>
+                  <h3 class="font-bold text-sm text-white flex items-center gap-1.5">💳 Pemindai Pembayaran Siswa</h3>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Scan Barcode / QR Kartu Pelajar untuk potong saldo.</p>
+                </div>
+                <button onclick="openModalPosTopup()" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 active-scale text-slate-950 font-extrabold text-[11px] rounded-xl shadow flex items-center gap-1">
+                  💵 Isi Saldo
+                </button>
+              </div>
+
+              <div class="space-y-2">
+                <button onclick="togglePosCameraScanner()" id="btn-pos-camera-toggle" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs rounded-xl shadow">📷 Buka Kamera Scan Kartu</button>
+                
+                <div id="pos-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black min-h-[220px]">
+                  <div id="pos-qr-reader" class="w-full"></div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                  <input type="text" id="pos-scan-input" onkeypress="if(event.key==='Enter') processPosPayment()" placeholder="Scan Barcode / Ketik NIS..." class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-mono outline-none">
+                  <button onclick="processPosPayment()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Bayar</button>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-800 pt-3" id="pos-student-select-container">
+                <label class="block font-bold text-slate-300 text-[11px] mb-1">Atau Pilih Nasabah Siswa:</label>
+                <select id="pos-student-select" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 font-bold text-xs text-white outline-none"></select>
+              </div>
+
+              <button onclick="processPosPayment()" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg active-scale">
+                ⚡ Konfirmasi Bayar Pakai Saldo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: SCAN BARCODE CEK SALDO MANDIRI (FULLSCREEN KIOSK UNTUK SISWA) -->
+      <div id="tab-check-balance" class="tab-content space-y-6 no-print w-full flex-1 flex flex-col justify-center items-center py-4">
+        <!-- TOMBOL KELUAR MANDIRI / LOGOUT KHUSUS SISWA (KANTOS/KIOSK) -->
+        <div id="student-kiosk-logout" class="w-full max-w-2xl flex justify-between items-center px-2 mb-2 hidden">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🛒</span>
+            <span class="font-extrabold text-slate-900 text-sm">Tabung<span class="text-emerald-600">Ku</span> Mandiri</span>
+          </div>
+          <button onclick="handleLogout()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-xl text-xs active-scale flex items-center gap-1 border border-red-200">
+            🚪 Exit / Logout
+          </button>
+        </div>
+
+        <div class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-2xl space-y-6 max-w-2xl w-full mx-auto my-auto">
+          <div class="text-center space-y-2">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-800 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-sm">
+              🔍
+            </div>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight">Anjungan Scan Cek Saldo Mandiri</h2>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">Scan barcode pada kartu pelajar atau ketik NIS / No. Rekening pribadi Anda untuk memeriksa sisa saldo tabungan secara otomatis.</p>
+          </div>
+
+          <div class="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-800">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">📷 Pemindai Barcode Kamera</h3>
+              <button onclick="toggleBalanceCamera()" id="btn-balance-cam-toggle" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black rounded-xl shadow-lg active-scale">Buka Kamera Scan</button>
+            </div>
+
+            <div id="balance-camera-wrapper" class="hidden relative rounded-2xl overflow-hidden border-2 border-emerald-500 bg-black min-h-[240px]">
+              <div id="balance-qr-reader" class="w-full"></div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+              <input type="text" id="balance-query-input" onkeypress="if(event.key==='Enter') executeBalanceCheck()" placeholder="Scan Barcode / Ketik NIS / No. Rekening Pribadi..." class="flex-1 bg-slate-800 border border-slate-700 rounded-2xl px-5 py-4 text-sm text-white font-mono focus:border-emerald-500 outline-none shadow-inner">
+              <button onclick="executeBalanceCheck()" class="px-6 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-2xl shadow-lg active-scale uppercase tracking-wider">Cek Saldo</button>
+            </div>
+          </div>
+
+          <!-- Pilihan dropdown siswa HANYA MUNCUL DI MODE PETUGAS KANTIN / ADMIN -->
+          <div id="balance-select-wrapper" class="hidden">
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Langsung Nama Siswa (Khusus Petugas):</label>
+            <select id="balance-select-student" onchange="executeBalanceCheckSelect()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: PENGELOLAAN DATA PENGGUNA (ADMIN ONLY) -->
+      <div id="tab-users" class="tab-content space-y-4 hidden">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">⚙️ Pengelolaan Data Pengguna (Multi-User)</h2>
+              <p class="text-xs text-slate-500">Kelola daftar akun pengguna, tambah petugas kasir baru, dan tentukan hak akses masing-masing user.</p>
+            </div>
+            <button onclick="openModalUserForm()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow flex items-center justify-center gap-1.5">
+              ➕ Tambah User Baru
+            </button>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b">
+                  <th class="p-3">Nama Pengguna</th>
+                  <th class="p-3">Username</th>
+                  <th class="p-3">Role / Hak Akses</th>
+                  <th class="p-3">Password</th>
+                  <th class="p-3 text-center">Aksi Operasional</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: TELLER BANK (ADMIN ONLY) -->
+      <div id="tab-transaction" class="tab-content space-y-4 sm:space-y-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+            <div class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-xl space-y-4 border border-slate-800">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="font-bold text-sm text-white flex items-center gap-2">
+                    <span>📷 Pemindai Barcode Transaksi</span>
+                    <span id="scan-status-badge" class="px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">SIAP SCAN</span>
+                  </h3>
+                </div>
+                <button onclick="toggleCameraScanner()" id="btn-camera-toggle" class="px-3.5 py-2 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 text-xs font-extrabold rounded-xl shadow">📷 Buka Kamera</button>
+              </div>
+
+              <div id="camera-preview-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-emerald-500 bg-black min-h-[220px]">
+                <div id="qr-reader" class="w-full"></div>
+              </div>
+
+              <div class="flex gap-2">
+                <input type="text" id="scan-input" onkeypress="handleScanKeyPress(event)" placeholder="Scan Barcode Kartu / Ketik NIS / No Rekening..." class="flex-1 bg-slate-800 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-3 text-xs text-white font-mono outline-none">
+                <button onclick="handleScanCard()" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow">Proses Scan</button>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm space-y-4">
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Form Transaksi Teller Bank Utama</h2>
+              <form onsubmit="handleTransactionSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Jenis Transaksi</label>
+                  <select id="tx-type" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none">
+                    <option value="DEPOSIT">📥 SETOR TUNAI</option>
+                    <option value="WITHDRAWAL">📤 PENARIKAN TUNAI</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Pilih Siswa (Terpilih Otomatis Saat Scan)</label>
+                  <select id="tx-student-id" onchange="updateActiveStudentPreview()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800 outline-none"></select>
+                </div>
+                <div>
+                  <label class="block font-bold text-slate-700 mb-1">Nominal Transaksi (Rp)</label>
+                  <input type="number" id="tx-amount" required min="1000" step="1000" placeholder="Contoh: 50000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-base font-bold text-emerald-700 outline-none">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs uppercase rounded-xl shadow-lg">⚡ Simpan & Eksekusi Transaksi</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-xs space-y-3">
+              <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Informasi Rekening Aktif</h3>
+              <div id="active-student-preview" class="space-y-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: EDITOR DESAIN KARTU (ADMIN ONLY) -->
+      <div id="tab-design" class="tab-content space-y-6 hidden no-print">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-slate-900">🎨 Editor Desain & Branding Kartu ID</h2>
+            <p class="text-xs text-slate-500">Upload logo sekolah, pilih tema warna gradient, dan sesuaikan seluruh teks kartu secara real-time.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+            <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <h3 class="font-bold text-slate-800 text-sm border-b pb-2">Pengaturan Visual Instansi & Logo</h3>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Upload Logo Sekolah/Bank (JPG/PNG)</label>
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl border border-slate-300 bg-white flex items-center justify-center p-1 overflow-hidden shadow-inner">
+                    <img id="logo-preview-img" src="" class="w-full h-full object-contain hidden">
+                    <span id="logo-preview-placeholder" class="text-xl">🏫</span>
+                  </div>
+                  <input type="file" id="upload-logo-input" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs bg-white border p-2 rounded-xl flex-1">
+                </div>
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Pilih Skema Warna Gradient Kartu</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <button onclick="setTheme('theme-green')" class="py-2.5 bg-emerald-800 text-white font-bold rounded-lg text-xs shadow hover:bg-emerald-700">Hijau</button>
+                  <button onclick="setTheme('theme-blue')" class="py-2.5 bg-blue-900 text-white font-bold rounded-lg text-xs shadow hover:bg-blue-800">Biru</button>
+                  <button onclick="setTheme('theme-maroon')" class="py-2.5 bg-red-950 text-white font-bold rounded-lg text-xs shadow hover:bg-red-900">Marun</button>
+                  <button onclick="setTheme('theme-black')" class="py-2.5 bg-slate-950 text-white font-bold rounded-lg text-xs shadow hover:bg-slate-900">Hitam</button>
+                </div>
+              </div>
+              <h3 class="font-bold text-slate-800 text-sm border-b pb-2 pt-2">Teks Kartu & Legalitas Instansi</h3>
+              <div><label class="block font-bold text-slate-700 mb-1">Nama Bank / Program Sekolah</label><input type="text" id="design-bank-name" value="BANK TABUNGAN SEKOLAH" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Nama Sekolah / Lembaga Resmi</label><input type="text" id="design-school-name" value="SD NEGERI HARAPAN BANGSA" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Judul Utama Kartu Depan</label><input type="text" id="design-card-title" value="KARTU TANDA PELAJAR" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Badge Tag Kanan Atas</label><input type="text" id="design-card-tag" value="SMART CARD" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Nama Kepala Sekolah / Penandatangan</label><input type="text" id="design-headmaster" value="Drs. H. Suparna, M.Pd" oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Jabatan Penandatangan</label><input type="text" id="design-signatory-title" value="Kepala Sekolah," oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl font-bold text-slate-800"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 1)</label><input type="text" id="design-rule-1" value="1. Kartu ini sah sebagai Kartu Pelajar & Tabungan Bank Sekolah." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 2)</label><input type="text" id="design-rule-2" value="2. Harap dikembalikan ke pihak sekolah jika ditemukan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+              <div><label class="block font-bold text-slate-700 mb-1">Ketentuan Belakang Kartu (Baris 3)</label><input type="text" id="design-rule-3" value="3. Dilarang menyalahgunakan kartu untuk transaksi di luar ketentuan." oninput="updateDesignSettings()" class="w-full bg-white border p-2.5 rounded-xl text-[11px]"></div>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-slate-800 text-sm mb-2">Pratinjau Live Sampul Buku Tabungan</h3>
+              <div id="design-preview-box" class="passbook-bank-sheet theme-green rounded-xl p-6 shadow-xl flex flex-col justify-between border-2 border-white/20 scale-90 origin-top">
+                <div class="flex justify-between items-start border-b border-white/30 pb-3">
+                  <div class="flex items-center gap-3">
+                    <div id="preview-logo-container" class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center p-1">🏫</div>
+                    <div>
+                      <h1 class="font-bank-title text-xl font-extrabold" id="preview-bank-name">BANK TABUNGAN SEKOLAH</h1>
+                      <p class="text-[9px] uppercase tracking-wider" id="preview-school-name">SD NEGERI HARAPAN BANGSA</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-center my-auto">
+                  <h2 class="font-bank-title text-2xl font-black tracking-widest uppercase">BUKU TABUNGAN</h2>
+                  <p class="text-[10px] opacity-80 mt-1">SIMPANAN PELAJAR SMART BANKING</p>
+                </div>
+                <div class="border-t border-white/30 pt-3 text-xs font-mono flex justify-between">
+                  <div><p class="text-[9px] opacity-75">NAMA NASABAH:</p><p class="font-bold uppercase">AHMAD RAIHAN</p></div>
+                  <div class="text-right"><p class="text-[9px] opacity-75">NO. REKENING:</p><p class="font-bold">5080-01-002341-53-8</p></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- TAB 5: KARTU DIGITAL -->
-    <div id="tab-digital-card" class="tab-content space-y-6 hidden">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">📱 Kartu Pelajar & Tabungan Digital</h2>
-            <p class="text-xs text-slate-500">Kartu digital interaktif lengkap dengan logo, foto profil, dan barcode siap unduh.</p>
+      <!-- TAB 6: KARTU DIGITAL (ADMIN ONLY) -->
+      <div id="tab-digital-card" class="tab-content space-y-6 hidden">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">📱 Kartu Pelajar & Tabungan Digital</h2>
+              <p class="text-xs text-slate-500">Kartu digital interaktif lengkap dengan logo, foto profil, dan barcode siap unduh.</p>
+            </div>
+            <button onclick="downloadDigitalCardImage()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
+              💾 Unduh Kartu PNG
+            </button>
           </div>
-          <button onclick="downloadDigitalCardImage()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-1.5">
-            💾 Unduh Kartu PNG
-          </button>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
+            <select id="digital-student-select" onchange="renderDigitalCard()" class="max-w-md w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
+          </div>
+        </div>
+        <div class="flex justify-center py-4">
+          <div id="digital-card-preview-wrapper" class="digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl"></div>
+        </div>
+      </div>
+
+      <!-- TAB 7: DATA NASABAH (ADMIN ONLY) -->
+      <div id="tab-students" class="tab-content space-y-4 hidden">
+        <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">Data Nasabah Siswa & Rekening</h2>
+              <p class="text-xs text-slate-500">Kelola data nasabah, edit profil, cetak kartu, atau hapus rekening nasabah.</p>
+            </div>
+            <button onclick="openModalNewStudent()" class="w-full sm:w-auto px-4 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
+              ➕ Buka Rekening Baru
+            </button>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 text-xs">
+            <input type="text" id="search-student-input" onkeyup="renderStudentsTable()" placeholder="🔍 Cari Nama, NIS, atau No. Rekening..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-emerald-500">
+            <select id="filter-class-select" onchange="renderStudentsTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 text-xs">
+              <option value="ALL">Semua Kelas</option>
+            </select>
+          </div>
+
+          <div class="overflow-x-auto rounded-xl border border-slate-100">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 text-[10px] sm:text-[11px] uppercase font-bold text-slate-500 tracking-wider">
+                  <th class="p-3">Foto</th>
+                  <th class="p-3">No. Rekening & NIS</th>
+                  <th class="p-3">Nama Lengkap Siswa</th>
+                  <th class="p-3">Kelas Custom</th>
+                  <th class="p-3">Total Tabungan</th>
+                  <th class="p-3 text-center">Aksi Operasional</th>
+                </tr>
+              </thead>
+              <tbody id="student-table-body" class="divide-y divide-slate-100 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: CETAK BUKU TABUNGAN (ADMIN ONLY) -->
+      <div id="tab-passbook" class="tab-content space-y-6 hidden">
+        <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">📖 Cetak Buku Tabungan Fisik</h2>
+              <p class="text-xs text-slate-500">Pilih lembar identitas, sampul depan, atau mutasi transaksi dengan kontrol baris offset.</p>
+            </div>
+            <button onclick="triggerPrint()" class="w-full md:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow flex items-center justify-center gap-2">
+              🖨️ Cetak Buku Tabungan
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Halaman Cetak</label>
+              <select id="passbook-view-mode" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+                <option value="MUTATION_PAGE" selected>3. Lembar Mutasi Transaksi</option>
+                <option value="INSIDE_COVER">2. Sampul Dalam (Identitas Siswa)</option>
+                <option value="COVER_OUTER">1. Sampul Luar (Cover Buku)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Target Media Printer</label>
+              <select id="passbook-print-style" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+                <option value="TEXT_ONLY" selected>Teks Murni (Cetak di Buku Fisik)</option>
+                <option value="FULL_PREVIEW">Lengkap Warna + Garis Tabel</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Pilih Nasabah Siswa</label>
+              <select id="passbook-student-select" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800"></select>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Mulai Baris Cetak (Offset)</label>
+              <select id="passbook-line-offset" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
+                <option value="1">Baris ke-1 (Paling Atas)</option>
+                <option value="2">Baris ke-2</option><option value="3">Baris ke-3</option><option value="4">Baris ke-4</option><option value="5">Baris ke-5</option>
+                <option value="6">Baris ke-6</option><option value="7">Baris ke-7</option><option value="8">Baris ke-8</option><option value="9">Baris ke-9</option>
+                <option value="10">Baris ke-10</option><option value="11">Baris ke-11</option><option value="12">Baris ke-12</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="print-container flex justify-center py-2 overflow-x-auto">
+          <div id="passbook-sheet-container" class="shadow-2xl rounded-sm scale-90 sm:scale-100 origin-top"></div>
+        </div>
+      </div>
+
+      <!-- TAB 9: KARTU PVC (ADMIN ONLY) -->
+      <div id="tab-card" class="tab-content space-y-6 hidden">
+        <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-slate-900">💳 Cetak Kartu Pelajar PVC (CR-80)</h2>
+              <p class="text-xs text-slate-500">Pratinjau fisik kartu PVC depan dan belakang.</p>
+            </div>
+            <button onclick="triggerPrint()" class="w-full sm:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow">🖨️ Cetak Kartu Fisik</button>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
+            <select id="card-student-select" onchange="renderIDCard()" class="max-w-xs w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800"></select>
+          </div>
+        </div>
+        <div class="flex flex-col md:flex-row justify-center items-center gap-6 sm:gap-8 py-4">
+          <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN DEPAN</p><div id="card-front-container" class="shadow-2xl rounded-xl"></div></div>
+          <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN BELAKANG</p><div id="card-back-container" class="shadow-2xl rounded-xl"></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODAL TAMBAH & KELOLA MENU CEPAT KANTIN -->
+  <div id="modal-manage-menu" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl relative text-xs space-y-4">
+      <button onclick="closeModalManageMenu()" class="absolute right-4 top-4 font-bold text-base text-slate-400 hover:text-slate-800">✕</button>
+      
+      <div class="border-b pb-2">
+        <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+          <span>⚙️ Kelola Menu Cepat Kantin</span>
+        </h3>
+        <p class="text-[10px] text-slate-500">Tambah menu makanan/minuman yang sering dibeli untuk akses cepat.</p>
+      </div>
+
+      <!-- FORM TAMBAH MENU BARU -->
+      <form onsubmit="handleAddNewMenu(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-3">
+        <p class="font-bold text-slate-800 text-[11px]">➕ Tambah Menu Cepat Baru</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div class="sm:col-span-1">
+            <input type="text" id="new-menu-icon" placeholder="Icon (🍛/🍹)" value="🍛" class="w-full bg-white border border-slate-200 rounded-lg p-2 text-center text-sm">
+          </div>
+          <div class="sm:col-span-2">
+            <input type="text" id="new-menu-name" required placeholder="Nama Makanan / Minuman" class="w-full bg-white border border-slate-200 rounded-lg p-2 font-bold text-slate-800 outline-none focus:border-emerald-500">
+          </div>
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
-          <select id="digital-student-select" onchange="renderDigitalCard()" class="max-w-md w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800 outline-none"></select>
+          <input type="number" id="new-menu-price" required min="100" step="100" placeholder="Harga Satuan (Rp)" class="w-full bg-white border border-slate-200 rounded-lg p-2 font-bold text-slate-800 outline-none focus:border-emerald-500">
         </div>
+        <button type="submit" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-lg shadow">
+          💾 Simpan Menu Baru
+        </button>
+      </form>
+
+      <!-- DAFTAR MENU CEPAT AKTIF -->
+      <div class="space-y-2">
+        <p class="font-bold text-slate-700 text-[11px]">Daftar Menu Cepat Saat Ini:</p>
+        <div id="manage-menu-list" class="max-h-48 overflow-y-auto space-y-1.5 pr-1"></div>
       </div>
-      <div class="flex justify-center py-4">
-        <div id="digital-card-preview-wrapper" class="digital-card-container relative rounded-2xl p-5 text-white flex flex-col justify-between overflow-hidden shadow-2xl"></div>
-      </div>
+
+      <button type="button" onclick="closeModalManageMenu()" class="w-full py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200">
+        Selesai
+      </button>
     </div>
+  </div>
 
-    <!-- TAB 6: DATA NASABAH -->
-    <div id="tab-students" class="tab-content space-y-4 hidden">
-      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">Data Nasabah Siswa & Rekening</h2>
-            <p class="text-xs text-slate-500">Kelola data nasabah, edit profil, cetak kartu, atau hapus rekening nasabah.</p>
-          </div>
-          <button onclick="openModalNewStudent()" class="w-full sm:w-auto px-4 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-bold text-xs rounded-xl flex items-center justify-center gap-2 shadow">
-            ➕ Buka Rekening Baru
-          </button>
+  <!-- MODAL EDIT / TAMBAH USER PENGGUNA -->
+  <div id="modal-user-form" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4">
+      <button onclick="closeModalUserForm()" class="absolute right-4 top-4 font-bold text-base text-slate-400 hover:text-slate-800">✕</button>
+      <h3 id="modal-user-title" class="text-sm font-extrabold text-slate-900 border-b pb-2">Tambah User Baru</h3>
+
+      <form onsubmit="handleUserFormSubmit(event)" class="space-y-3">
+        <input type="hidden" id="form-user-id" value="">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nama Lengkap Pengguna</label>
+          <input type="text" id="form-user-name" required placeholder="Contoh: Petugas Kantin A" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 outline-none focus:border-emerald-500">
         </div>
-
-        <div class="flex flex-col sm:flex-row gap-3 text-xs">
-          <input type="text" id="search-student-input" onkeyup="renderStudentsTable()" placeholder="🔍 Cari Nama, NIS, atau No. Rekening..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:border-emerald-500">
-          <select id="filter-class-select" onchange="renderStudentsTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 font-bold text-slate-700 text-xs">
-            <option value="ALL">Semua Kelas</option>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Username Login</label>
+          <input type="text" id="form-user-username" required placeholder="Contoh: kasir1" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-slate-800 outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Password Login</label>
+          <input type="text" id="form-user-password" required placeholder="Contoh: 123" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-mono text-slate-800 outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Role / Hak Akses Pengguna</label>
+          <select id="form-user-role" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 outline-none">
+            <option value="CEK_SALDO">Siswa / Anjungan Mandiri (Hanya Cek Saldo)</option>
+            <option value="KANTIN">Kasir Kantin (Terbatas POS & Cek Saldo)</option>
+            <option value="ADMIN">Admin Utama (Akses Penuh Seluruh Sistem)</option>
           </select>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-slate-100">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-slate-50 text-[10px] sm:text-[11px] uppercase font-bold text-slate-500 tracking-wider">
-                <th class="p-3">Foto</th>
-                <th class="p-3">No. Rekening & NIS</th>
-                <th class="p-3">Nama Lengkap Siswa</th>
-                <th class="p-3">Kelas Custom</th>
-                <th class="p-3">Total Tabungan</th>
-                <th class="p-3 text-center">Aksi Operasional</th>
-              </tr>
-            </thead>
-            <tbody id="student-table-body" class="divide-y divide-slate-100 text-xs"></tbody>
-          </table>
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModalUserForm()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200">Batal</button>
+          <button type="submit" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold rounded-xl shadow">Simpan User</button>
         </div>
-      </div>
+      </form>
     </div>
+  </div>
 
-    <!-- TAB 7: CETAK BUKU TABUNGAN -->
-    <div id="tab-passbook" class="tab-content space-y-6 hidden">
-      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">📖 Cetak Buku Tabungan Fisik</h2>
-            <p class="text-xs text-slate-500">Pilih lembar identitas, sampul depan, atau mutasi transaksi dengan kontrol baris offset.</p>
-          </div>
-          <button onclick="triggerPrint()" class="w-full md:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 active-scale text-slate-900 font-extrabold text-xs rounded-xl shadow flex items-center justify-center gap-2">
-            🖨️ Cetak Buku Tabungan
-          </button>
+  <!-- MODAL ISI SALDO DI POS DENGAN SCANNER SEAMLESS -->
+  <div id="modal-pos-topup" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4 border border-amber-500/40 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModalPosTopup()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
+
+      <div class="border-b pb-2">
+        <h3 class="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">💵 Isi Saldo / Top-Up Tabungan</h3>
+        <p class="text-[10px] text-slate-500">Scan kartu atau pilih nama siswa untuk menambah saldo secara instan.</p>
+      </div>
+
+      <!-- SCANNER DEDIKASI MODAL TOP-UP -->
+      <div class="bg-slate-900 p-3 rounded-xl space-y-2 text-white">
+        <div class="flex justify-between items-center">
+          <span class="font-bold text-[11px] text-amber-400">📷 Scan Kartu Pelajar</span>
+          <button type="button" onclick="toggleTopupCameraScanner()" id="btn-topup-cam-toggle" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold rounded-lg text-[10px] shadow">Buka Kamera</button>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Halaman Cetak</label>
-            <select id="passbook-view-mode" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="MUTATION_PAGE" selected>3. Lembar Mutasi Transaksi</option>
-              <option value="INSIDE_COVER">2. Sampul Dalam (Identitas Siswa)</option>
-              <option value="COVER_OUTER">1. Sampul Luar (Cover Buku)</option>
-            </select>
-          </div>
+        <div id="topup-camera-wrapper" class="hidden relative rounded-xl overflow-hidden border-2 border-amber-500 bg-black min-h-[180px]">
+          <div id="topup-qr-reader" class="w-full"></div>
+        </div>
 
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Target Media Printer</label>
-            <select id="passbook-print-style" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="TEXT_ONLY" selected>Teks Murni (Cetak di Buku Fisik)</option>
-              <option value="FULL_PREVIEW">Lengkap Warna + Garis Tabel</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Pilih Nasabah Siswa</label>
-            <select id="passbook-student-select" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800"></select>
-          </div>
-
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Mulai Baris Cetak (Offset)</label>
-            <select id="passbook-line-offset" onchange="renderPassbook()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-slate-800">
-              <option value="1">Baris ke-1 (Paling Atas)</option>
-              <option value="2">Baris ke-2</option><option value="3">Baris ke-3</option><option value="4">Baris ke-4</option><option value="5">Baris ke-5</option>
-              <option value="6">Baris ke-6</option><option value="7">Baris ke-7</option><option value="8">Baris ke-8</option><option value="9">Baris ke-9</option>
-              <option value="10">Baris ke-10</option><option value="11">Baris ke-11</option><option value="12">Baris ke-12</option>
-            </select>
-          </div>
+        <div class="flex gap-1.5">
+          <input type="text" id="topup-scan-input" onkeypress="if(event.key==='Enter'){ event.preventDefault(); searchTopupStudentByScan(); }" placeholder="Ketik NIS / Scan Kartu..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-2 text-xs text-white font-mono outline-none focus:border-amber-500">
+          <button type="button" onclick="searchTopupStudentByScan()" class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg shadow">Cari</button>
         </div>
       </div>
 
-      <div class="print-container flex justify-center py-2 overflow-x-auto">
-        <div id="passbook-sheet-container" class="shadow-2xl rounded-sm scale-90 sm:scale-100 origin-top"></div>
-      </div>
-    </div>
-
-    <!-- TAB 8: KARTU PVC -->
-    <div id="tab-card" class="tab-content space-y-6 hidden">
-      <div class="no-print bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-4">
-          <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-900">💳 Cetak Kartu Pelajar PVC (CR-80)</h2>
-            <p class="text-xs text-slate-500">Pratinjau fisik kartu PVC depan dan belakang.</p>
-          </div>
-          <button onclick="triggerPrint()" class="w-full sm:w-auto px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold text-xs rounded-xl shadow">🖨️ Cetak Kartu Fisik</button>
-        </div>
+      <form onsubmit="handlePosTopupSubmit(event)" class="space-y-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1 text-xs">Pilih Nasabah Siswa</label>
-          <select id="card-student-select" onchange="renderIDCard()" class="max-w-xs w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-bold text-xs text-slate-800"></select>
+          <label class="block font-bold text-slate-700 mb-1">Pilih Siswa Nasabah</label>
+          <select id="pos-topup-student" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-bold text-slate-800 outline-none focus:border-amber-500"></select>
         </div>
-      </div>
-      <div class="flex flex-col md:flex-row justify-center items-center gap-6 sm:gap-8 py-4">
-        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN DEPAN</p><div id="card-front-container" class="shadow-2xl rounded-xl"></div></div>
-        <div><p class="text-xs font-bold text-slate-500 text-center mb-2 no-print">TAMPILAN BELAKANG</p><div id="card-back-container" class="shadow-2xl rounded-xl"></div></div>
-      </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Nominal Isi Saldo (Rp)</label>
+          <input type="number" id="pos-topup-amount" required min="1000" step="1000" placeholder="Contoh: 20000" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-black text-emerald-700 text-base outline-none focus:border-amber-500">
+        </div>
+
+        <div class="grid grid-cols-3 gap-1.5 pt-1">
+          <button type="button" onclick="setPosTopupAmount(10000)" class="py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-[10px]">10 Rb</button>
+          <button type="button" onclick="setPosTopupAmount(20000)" class="py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-[10px]">20 Rb</button>
+          <button type="button" onclick="setPosTopupAmount(50000)" class="py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-[10px]">50 Rb</button>
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModalPosTopup()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 text-xs">Batal</button>
+          <button type="submit" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 active-scale text-slate-950 font-extrabold rounded-xl shadow text-xs">⚡ Top Up & Cetak Slip</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-  </main>
-
-  <!-- MODAL CEK SALDO MANDIRI -->
+  <!-- MODAL HASIL CEK SALDO MANDIRI -->
   <div id="modal-balance-result" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl relative text-xs space-y-4 border border-emerald-500/30">
       <button onclick="closeModalBalanceResult()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
@@ -564,7 +816,7 @@
         <div id="res-tx-history" class="space-y-1.5 max-h-36 overflow-y-auto"></div>
       </div>
 
-      <button onclick="closeModalBalanceResult()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-md">Tutup Informational</button>
+      <button onclick="closeModalBalanceResult()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-md">Tutup Informasi</button>
     </div>
   </div>
 
@@ -602,21 +854,21 @@
     </div>
   </div>
 
-  <!-- MODAL SLIP STRUK NOTA BELANJA -->
+  <!-- MODAL SLIP STRUK NOTA BELANJA / SLIP SETOR TUNAI -->
   <div id="modal-pos-receipt" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-xs space-y-4 no-print border border-slate-300">
       <button onclick="closeModalPosReceipt()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-800 font-bold text-base">✕</button>
 
       <div class="text-center pb-2 border-b">
-        <h3 class="text-sm font-extrabold text-slate-900">🧾 Struk Transaksi Perdagangan</h3>
-        <p class="text-[10px] text-slate-500">Pratinjau Slip Nota Belanja Kasir Toko/Kantin</p>
+        <h3 class="text-sm font-extrabold text-slate-900" id="receipt-modal-title">Receipt Struk</h3>
+        <p class="text-[10px] text-slate-500" id="receipt-modal-subtitle">Pratinjau Slip Bukti Transaksi</p>
       </div>
 
       <div id="receipt-print-area" class="receipt-paper shadow-inner rounded space-y-2"></div>
 
       <div class="flex gap-2 pt-2 no-print">
         <button onclick="closeModalPosReceipt()" class="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 text-xs">Tutup</button>
-        <button onclick="triggerPrint()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold rounded-xl shadow text-xs">🖨️ Cetak Struk</button>
+        <button onclick="triggerPrint()" class="flex-1 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-extrabold rounded-xl shadow text-xs">🖨️ Cetak Slip</button>
       </div>
     </div>
   </div>
@@ -624,7 +876,7 @@
   <canvas id="receipt-canvas" class="hidden"></canvas>
   <div id="toast-container" class="fixed bottom-16 sm:bottom-5 right-3 z-50 flex flex-col gap-2 pointer-events-none no-print"></div>
 
-  <!-- JAVASCRIPT ENGINE DENGAN CONFIG SCANNER KAMERA BERKUALITAS TINGGI -->
+  <!-- JAVASCRIPT ENGINE KIOSK FULLSCREEN MANDIRI -->
   <script>
     function generateBarcodeSVG(text) {
       const cleanText = String(text || '000000').trim();
@@ -661,15 +913,36 @@
       setTimeout(() => toast.remove(), 3000);
     }
 
+    /* AKUN DEFAULT SYSTEM */
+    const defaultUsersList = [
+      { id: 'USR001', name: 'Administrator Utama', username: 'admin', password: '123', role: 'ADMIN' },
+      { id: 'USR002', name: 'Petugas Kasir Kantin', username: 'kantin', password: '123', role: 'KANTIN' },
+      { id: 'USR003', name: 'Siswa / Anjungan Mandiri', username: 'siswa', password: '123', role: 'CEK_SALDO' }
+    ];
+
+    /* MENU CEPAT DEFAULT KANTIN */
+    const defaultQuickMenus = [
+      { id: 'MENU-1', icon: '🍛', name: 'Nasi Goreng', price: 10000 },
+      { id: 'MENU-2', icon: '🍹', name: 'Es Teh Manis', price: 3000 },
+      { id: 'MENU-3', icon: '🍜', name: 'Bakso Kuah', price: 12000 },
+      { id: 'MENU-4', icon: '💧', name: 'Air Mineral', price: 3000 }
+    ];
+
+    let currentUser = null;
+    let users = [...defaultUsersList];
+    let quickMenus = [...defaultQuickMenus];
+
     let currentTheme = 'theme-green';
     let institutionLogoBase64 = '';
     let tempPhotoBase64 = '';
     let html5QrCodeScanner = null;
     let balanceQrScanner = null;
     let posQrScanner = null;
+    let topupQrScanner = null;
     let isCameraActive = false;
     let isBalanceCameraActive = false;
     let isPosCameraActive = false;
+    let isTopupCameraActive = false;
 
     let designConfig = {
       bankName: 'BANK TABUNGAN SEKOLAH',
@@ -694,7 +967,247 @@
       { id: 'TRX-1002', date: '05/08/26', time: '09:15', studentId: 'SIS001', code: 'KM', type: 'DEPOSIT', amount: 250000, runningBalance: 450000, teller: 'TLR01', notes: 'Setoran Mingguan' }
     ];
 
+    /* KLIK LOGO DENGAN VERIFIKASI ROLE */
+    function handleLogoClick() {
+      if (currentUser && currentUser.role === 'CEK_SALDO') {
+        switchTab('check-balance');
+      } else {
+        switchTab('pos');
+      }
+    }
+
+    /* LOGIN ENGINE */
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      
+      const usernameInput = document.getElementById('login-username').value.trim();
+      const passwordInput = document.getElementById('login-password').value.trim();
+
+      if (!usernameInput || !passwordInput) {
+        showToast('Username dan Password wajib diisi!', 'error');
+        return;
+      }
+
+      const foundUser = users.find(u => 
+        String(u.username).trim().toLowerCase() === usernameInput.toLowerCase() && 
+        String(u.password).trim() === passwordInput
+      );
+
+      if (foundUser) {
+        currentUser = foundUser;
+        localStorage.setItem('tabungku_current_user', JSON.stringify(currentUser));
+        
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-content').classList.remove('hidden');
+
+        applyUserSessionPermissions();
+        showToast(`Selamat datang, ${currentUser.name}!`);
+      } else {
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-password').focus();
+        showToast('Username atau Password salah!', 'error');
+      }
+    }
+
+    function resetDefaultAccounts() {
+      if (confirm("Reset seluruh data akun ke setelan awal pabrik?")) {
+        users = [...defaultUsersList];
+        currentUser = null;
+        localStorage.setItem('tabungku_users', JSON.stringify(users));
+        localStorage.removeItem('tabungku_current_user');
+        
+        document.getElementById('login-username').value = 'siswa';
+        document.getElementById('login-password').value = '123';
+        showToast('Akun berhasil direset!');
+      }
+    }
+
+    function handleLogout() {
+      if (confirm("Keluar dari sesi akun?")) {
+        currentUser = null;
+        localStorage.removeItem('tabungku_current_user');
+        document.getElementById('app-content').classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        showToast("Berhasil keluar!");
+      }
+    }
+
+    function applyUserSessionPermissions() {
+      if (!currentUser) return;
+
+      document.getElementById('user-display-name').innerText = currentUser.name;
+      document.getElementById('user-display-role').innerText = currentUser.role;
+
+      const mainHeader = document.getElementById('main-header');
+      const desktopSubnav = document.getElementById('desktop-subnav-wrapper');
+      const mobileBottomnav = document.getElementById('mobile-bottomnav-wrapper');
+      const balanceSelectWrapper = document.getElementById('balance-select-wrapper');
+      const kioskLogoutBtn = document.getElementById('student-kiosk-logout');
+
+      if (currentUser.role === 'CEK_SALDO') {
+        /* MODE FULLSCREEN LAYAR PENUH UNTUK USER SISWA (ANJUNGAN MANDIRI) */
+        if (mainHeader) mainHeader.classList.add('hidden');
+        if (desktopSubnav) desktopSubnav.classList.add('hidden');
+        if (mobileBottomnav) mobileBottomnav.classList.add('hidden');
+        if (balanceSelectWrapper) balanceSelectWrapper.classList.add('hidden');
+        if (kioskLogoutBtn) kioskLogoutBtn.classList.remove('hidden');
+
+        document.querySelectorAll('.nav-kantin-allow, .mob-kantin-allow').forEach(el => el.classList.add('hidden'));
+
+        switchTab('check-balance');
+      } else {
+        /* TAMPILAN NORMAL PETUGAS & ADMIN */
+        if (mainHeader) mainHeader.classList.remove('hidden');
+        if (kioskLogoutBtn) kioskLogoutBtn.classList.add('hidden');
+
+        const totalBalanceBox = document.getElementById('header-total-balance-wrapper');
+        const btnAddStudent = document.getElementById('btn-admin-add-student');
+        const subtitle = document.getElementById('header-system-subtitle');
+
+        if (currentUser.role === 'KANTIN') {
+          if (subtitle) subtitle.innerText = 'Sistem Kasir Kantin Sekolah';
+          if (totalBalanceBox) totalBalanceBox.classList.add('hidden');
+          if (btnAddStudent) btnAddStudent.classList.add('hidden');
+          
+          if (desktopSubnav) desktopSubnav.classList.remove('hidden');
+          if (mobileBottomnav) mobileBottomnav.classList.remove('hidden');
+          if (balanceSelectWrapper) balanceSelectWrapper.classList.remove('hidden');
+
+          document.querySelectorAll('.nav-admin-only, .mob-admin-only').forEach(el => el.classList.add('hidden'));
+          document.querySelectorAll('.nav-kantin-allow, .mob-kantin-allow').forEach(el => el.classList.remove('hidden'));
+
+          switchTab('pos');
+        } else {
+          /* ADMIN UTAMA MEMILIKI AKSES PENUH */
+          if (subtitle) subtitle.innerText = 'Sistem Perbankan & POS Sekolah';
+          if (totalBalanceBox) totalBalanceBox.classList.remove('hidden');
+          if (btnAddStudent) btnAddStudent.classList.remove('hidden');
+          
+          if (desktopSubnav) desktopSubnav.classList.remove('hidden');
+          if (mobileBottomnav) mobileBottomnav.classList.remove('hidden');
+          if (balanceSelectWrapper) balanceSelectWrapper.classList.remove('hidden');
+
+          document.querySelectorAll('.nav-admin-only, .mob-admin-only').forEach(el => el.classList.remove('hidden'));
+          document.querySelectorAll('.nav-kantin-allow, .mob-kantin-allow').forEach(el => el.classList.remove('hidden'));
+
+          switchTab('pos');
+        }
+      }
+    }
+
+    /* PENGELOLAAN MULTI-USER */
+    function renderUsersTable() {
+      const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+
+      tbody.innerHTML = users.map(u => {
+        let badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
+        let roleLabel = '🍔 KASIR KANTIN';
+
+        if (u.role === 'ADMIN') {
+          badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-300';
+          roleLabel = '⚡ ADMIN';
+        } else if (u.role === 'CEK_SALDO') {
+          badgeColor = 'bg-blue-100 text-blue-800 border-blue-300';
+          roleLabel = '🔍 CEK SALDO MANDIRI';
+        }
+
+        return `
+          <tr class="hover:bg-slate-50 transition-colors">
+            <td class="p-3 font-bold text-slate-900">${u.name}</td>
+            <td class="p-3 font-mono font-bold text-slate-700">${u.username}</td>
+            <td class="p-3">
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${badgeColor}">
+                ${roleLabel}
+              </span>
+            </td>
+            <td class="p-3 font-mono text-slate-500">${u.password}</td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="editUser('${u.id}')" title="Edit User" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-xs shadow">✏️</button>
+                ${u.username === 'admin' ? '' : `<button onclick="deleteUser('${u.id}')" title="Hapus User" class="px-2.5 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-xs shadow">🗑️</button>`}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openModalUserForm() {
+      document.getElementById('modal-user-title').innerText = 'Tambah User Baru';
+      document.getElementById('form-user-id').value = '';
+      document.getElementById('form-user-name').value = '';
+      document.getElementById('form-user-username').value = '';
+      document.getElementById('form-user-password').value = '';
+      document.getElementById('form-user-role').value = 'CEK_SALDO';
+      document.getElementById('modal-user-form').classList.remove('hidden');
+    }
+
+    function closeModalUserForm() {
+      document.getElementById('modal-user-form').classList.add('hidden');
+    }
+
+    function handleUserFormSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-user-id').value;
+      const name = document.getElementById('form-user-name').value.trim();
+      const username = document.getElementById('form-user-username').value.trim();
+      const password = document.getElementById('form-user-password').value.trim();
+      const role = document.getElementById('form-user-role').value;
+
+      if (id) {
+        const u = users.find(usr => usr.id === id);
+        if (u) {
+          u.name = name; u.username = username; u.password = password; u.role = role;
+          showToast(`Data user ${name} diperbarui!`);
+        }
+      } else {
+        const exists = users.some(usr => usr.username.toLowerCase() === username.toLowerCase());
+        if (exists) { showToast('Username sudah digunakan!', 'error'); return; }
+
+        users.push({ id: `USR-${Date.now()}`, name, username, password, role });
+        showToast(`User ${name} berhasil ditambahkan!`);
+      }
+
+      saveStorage(); renderUsersTable(); closeModalUserForm();
+    }
+
+    function editUser(id) {
+      const u = users.find(usr => usr.id === id);
+      if (!u) return;
+
+      document.getElementById('modal-user-title').innerText = 'Edit Data User';
+      document.getElementById('form-user-id').value = u.id;
+      document.getElementById('form-user-name').value = u.name;
+      document.getElementById('form-user-username').value = u.username;
+      document.getElementById('form-user-password').value = u.password;
+      document.getElementById('form-user-role').value = u.role;
+      document.getElementById('modal-user-form').classList.remove('hidden');
+    }
+
+    function deleteUser(id) {
+      const u = users.find(usr => usr.id === id);
+      if (!u) return;
+
+      if (confirm(`Hapus akun pengguna ${u.name}?`)) {
+        users = users.filter(usr => usr.id !== id);
+        saveStorage(); renderUsersTable(); showToast("User dihapus!");
+      }
+    }
+
     function loadStorage() {
+      if (localStorage.getItem('tabungku_users')) {
+        try { users = JSON.parse(localStorage.getItem('tabungku_users')); } catch(e) { users = [...defaultUsersList]; }
+      }
+      if (localStorage.getItem('tabungku_quick_menus')) {
+        try { quickMenus = JSON.parse(localStorage.getItem('tabungku_quick_menus')); } catch(e) { quickMenus = [...defaultQuickMenus]; }
+      }
+      if (localStorage.getItem('tabungku_current_user')) {
+        try { currentUser = JSON.parse(localStorage.getItem('tabungku_current_user')); } catch(e) { currentUser = null; }
+      }
+
       if (localStorage.getItem('tabungku_students')) students = JSON.parse(localStorage.getItem('tabungku_students'));
       if (localStorage.getItem('tabungku_tx')) transactions = JSON.parse(localStorage.getItem('tabungku_tx'));
       if (localStorage.getItem('tabungku_pos_history')) posHistory = JSON.parse(localStorage.getItem('tabungku_pos_history'));
@@ -714,6 +1227,9 @@
     }
 
     function saveStorage() {
+      localStorage.setItem('tabungku_users', JSON.stringify(users));
+      localStorage.setItem('tabungku_quick_menus', JSON.stringify(quickMenus));
+      if (currentUser) localStorage.setItem('tabungku_current_user', JSON.stringify(currentUser));
       localStorage.setItem('tabungku_students', JSON.stringify(students));
       localStorage.setItem('tabungku_tx', JSON.stringify(transactions));
       localStorage.setItem('tabungku_pos_history', JSON.stringify(posHistory));
@@ -763,9 +1279,20 @@
     }
 
     function switchTab(tab) {
+      if (currentUser) {
+        if (currentUser.role === 'CEK_SALDO') {
+          /* DENGAN KETAT HANYA MENGIZINKAN TAB CHECK-BALANCE */
+          tab = 'check-balance';
+        } else if (currentUser.role === 'KANTIN' && tab !== 'pos' && tab !== 'check-balance') {
+          showToast("Akses Khusus Admin Sekolah", "error");
+          tab = 'pos';
+        }
+      }
+
       if (isCameraActive && tab !== 'transaction') stopCameraScanner();
       if (isBalanceCameraActive && tab !== 'check-balance') stopBalanceCamera();
       if (isPosCameraActive && tab !== 'pos') stopPosCameraScanner();
+      if (isTopupCameraActive) stopTopupCameraScanner();
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('bg-emerald-500/10', 'text-emerald-400', 'border'));
@@ -777,7 +1304,8 @@
       const activeBtn = document.getElementById(`btn-tab-${tab}`);
       if (activeBtn) activeBtn.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border');
 
-      if (tab === 'pos') { updatePosStudentDropdown(); renderPosCart(); renderPosHistory(); }
+      if (tab === 'pos') { renderQuickMenus(); updatePosStudentDropdown(); renderPosCart(); renderPosHistory(); }
+      if (tab === 'users') renderUsersTable();
       if (tab === 'check-balance') populateBalanceSelect();
       if (tab === 'passbook') renderPassbook();
       if (tab === 'digital-card') renderDigitalCard();
@@ -788,21 +1316,16 @@
 
     function triggerPrint() { window.print(); }
 
-    /* FUNGSI UTAMA ENGINE SCANNER KAMERA YANG DIPERBAIKI UTK ANDROID BARCODE KARTU ID */
-    function createScannerConfig() {
+    /* CAMERA SCANNER ENGINE HELPER */
+    function getScannerConfig() {
       return {
-        fps: 25,
+        fps: 20,
         qrbox: (viewfinderWidth, viewfinderHeight) => {
           const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-          return {
-            width: Math.floor(minEdge * 0.9),
-            height: Math.floor(minEdge * 0.45)
-          };
+          return { width: Math.floor(minEdge * 0.85), height: Math.floor(minEdge * 0.45) };
         },
         aspectRatio: 1.777778,
-        experimentalFeatures: {
-          useBarCodeDetectorIfSupported: true
-        },
+        experimentalFeatures: { useBarCodeDetectorIfSupported: true },
         formatsToSupport: [
           Html5QrcodeSupportedFormats.CODE_128,
           Html5QrcodeSupportedFormats.CODE_39,
@@ -812,16 +1335,134 @@
       };
     }
 
-    function getCameraConstraint() {
-      return {
-        facingMode: { exact: "environment" },
-        width: { min: 1280, ideal: 1920 },
-        height: { min: 720, ideal: 1080 },
-        focusMode: "continuous"
-      };
+    async function startScannerInstance(instance, onSuccess) {
+      const config = getScannerConfig();
+      try {
+        const devices = await Html5Qrcode.getCameras();
+        if (devices && devices.length > 0) {
+          const backCamera = devices.find(device => {
+            const label = device.label.toLowerCase();
+            return label.includes('back') || label.includes('rear') || label.includes('environment') || label.includes('belakang');
+          });
+          const selectedCameraId = backCamera ? backCamera.id : devices[devices.length - 1].id;
+          await instance.start(selectedCameraId, config, onSuccess, () => {});
+          return true;
+        }
+      } catch (err) { console.warn("Pencarian ID Kamera...", err); }
+
+      try {
+        await instance.start({ facingMode: "environment" }, config, onSuccess, () => {});
+        return true;
+      } catch (err) { console.warn("Gagal Facing Mode...", err); }
+
+      try {
+        await instance.start({ facingMode: "user" }, config, onSuccess, () => {});
+        return true;
+      } catch (err) { console.error("Izin kamera ditolak", err); return false; }
     }
 
-    /* KASIR PERDAGANGAN POS */
+    /* KASIR PERDAGANGAN / KANTIN POS */
+    function renderQuickMenus() {
+      const container = document.getElementById('quick-menu-container');
+      if (!container) return;
+
+      if (quickMenus.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 col-span-4 text-center py-2">Belum ada menu cepat. Klik "Kelola Menu" untuk menambah.</p>`;
+        return;
+      }
+
+      container.innerHTML = quickMenus.map(m => `
+        <button type="button" onclick="addQuickMenu('${m.name}', ${m.price})" class="p-2.5 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 rounded-xl text-left active-scale">
+          <p class="font-bold text-slate-800 text-xs">${m.icon || '🍛'} ${m.name}</p>
+          <p class="text-[11px] font-extrabold text-emerald-600">${formatRupiah(m.price)}</p>
+        </button>
+      `).join('');
+    }
+
+    function openModalManageMenu() {
+      renderManageMenuList();
+      document.getElementById('modal-manage-menu').classList.remove('hidden');
+    }
+
+    function closeModalManageMenu() {
+      document.getElementById('modal-manage-menu').classList.add('hidden');
+      renderQuickMenus();
+    }
+
+    function renderManageMenuList() {
+      const listEl = document.getElementById('manage-menu-list');
+      if (!listEl) return;
+
+      if (quickMenus.length === 0) {
+        listEl.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-2">Belum ada menu tersimpan.</p>`;
+        return;
+      }
+
+      listEl.innerHTML = quickMenus.map((m, idx) => `
+        <div class="flex items-center justify-between bg-slate-50 border border-slate-200 p-2 rounded-xl">
+          <div class="flex items-center gap-2">
+            <span class="text-base">${m.icon || '🍛'}</span>
+            <div>
+              <p class="font-bold text-slate-800">${m.name}</p>
+              <p class="text-[10px] text-emerald-600 font-bold">${formatRupiah(m.price)}</p>
+            </div>
+          </div>
+          <button type="button" onclick="deleteQuickMenu(${idx})" class="p-1.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-lg text-[10px]">
+            🗑️ Hapus
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleAddNewMenu(e) {
+      e.preventDefault();
+      const icon = document.getElementById('new-menu-icon').value.trim() || '🍛';
+      const name = document.getElementById('new-menu-name').value.trim();
+      const price = parseFloat(document.getElementById('new-menu-price').value);
+
+      if (!name || isNaN(price) || price <= 0) {
+        showToast('Isi nama menu dan harga dengan benar!', 'error');
+        return;
+      }
+
+      quickMenus.push({
+        id: `MENU-${Date.now()}`,
+        icon, name, price
+      });
+
+      saveStorage();
+      renderManageMenuList();
+      renderQuickMenus();
+
+      document.getElementById('new-menu-name').value = '';
+      document.getElementById('new-menu-price').value = '';
+      showToast(`Menu "${name}" berhasil ditambahkan!`);
+    }
+
+    function deleteQuickMenu(index) {
+      const item = quickMenus[index];
+      if (!item) return;
+
+      if (confirm(`Hapus menu "${item.name}" dari pilihan menu cepat?`)) {
+        quickMenus.splice(index, 1);
+        saveStorage();
+        renderManageMenuList();
+        renderQuickMenus();
+        showToast("Menu dihapus");
+      }
+    }
+
+    function addQuickMenu(name, price) {
+      const existingIndex = posCart.findIndex(item => item.name.toLowerCase() === name.toLowerCase() && item.price === price);
+      if (existingIndex !== -1) {
+        posCart[existingIndex].qty += 1;
+      } else {
+        posCart.push({ id: `ITEM-${Date.now()}`, name, price, qty: 1 });
+      }
+      renderPosCart();
+      showToast(`${name} ditambahkan!`);
+    }
+
     function handlePosAddItem(e) {
       e.preventDefault();
       const name = document.getElementById('pos-item-name').value.trim();
@@ -897,13 +1538,164 @@
       const select = document.getElementById('pos-student-select');
       const active = students.filter(s => s.status !== 'DIHAPUS');
       if (!select) return;
+      
       select.innerHTML = '<option value="">-- Scan / Pilih Siswa Pembayar --</option>' + 
         active.map(s => `<option value="${s.id}">${s.name} (${formatRupiah(s.balance)})</option>`).join('');
     }
 
+    /* ISI SALDO DI POS DENGAN SCANNER */
+    function openModalPosTopup() {
+      const select = document.getElementById('pos-topup-student');
+      const active = students.filter(s => s.status !== 'DIHAPUS');
+      if (!select) return;
+
+      select.innerHTML = active.map(s => `<option value="${s.id}">${s.name} - ${s.class} (${formatRupiah(s.balance)})</option>`).join('');
+      
+      const scanInput = document.getElementById('pos-scan-input').value.trim().toLowerCase();
+      const selectVal = document.getElementById('pos-student-select').value;
+      let targetStudent = null;
+
+      if (scanInput) {
+        targetStudent = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === scanInput || s.accountNo.toLowerCase() === scanInput || s.id.toLowerCase() === scanInput));
+      } else if (selectVal) {
+        targetStudent = students.find(s => s.id === selectVal);
+      }
+
+      if (targetStudent) select.value = targetStudent.id;
+
+      document.getElementById('topup-scan-input').value = '';
+      document.getElementById('pos-topup-amount').value = '20000';
+      document.getElementById('modal-pos-topup').classList.remove('hidden');
+    }
+
+    function closeModalPosTopup() {
+      if (isTopupCameraActive) stopTopupCameraScanner();
+      document.getElementById('modal-pos-topup').classList.add('hidden');
+    }
+
+    function toggleTopupCameraScanner() {
+      if (isTopupCameraActive) stopTopupCameraScanner(); else startTopupCameraScanner();
+    }
+
+    async function startTopupCameraScanner() {
+      const wrapper = document.getElementById('topup-camera-wrapper');
+      wrapper.classList.remove('hidden');
+      document.getElementById('btn-topup-cam-toggle').innerText = '🛑 Stop Kamera';
+
+      topupQrScanner = new Html5Qrcode("topup-qr-reader");
+      const onScanSuccess = (decodedText) => {
+        document.getElementById('topup-scan-input').value = decodedText;
+        searchTopupStudentByScan();
+        stopTopupCameraScanner();
+      };
+
+      const isStarted = await startScannerInstance(topupQrScanner, onScanSuccess);
+      if (isStarted) {
+        isTopupCameraActive = true;
+      } else {
+        showToast("Kamera top-up tidak bisa dibuka", "error");
+        stopTopupCameraScanner();
+      }
+    }
+
+    function stopTopupCameraScanner() {
+      if (topupQrScanner && isTopupCameraActive) {
+        topupQrScanner.stop().then(() => {
+          topupQrScanner.clear(); isTopupCameraActive = false;
+          document.getElementById('topup-camera-wrapper').classList.add('hidden');
+          document.getElementById('btn-topup-cam-toggle').innerText = 'Buka Kamera';
+        }).catch(() => {});
+      } else {
+        document.getElementById('topup-camera-wrapper').classList.add('hidden');
+        document.getElementById('btn-topup-cam-toggle').innerText = 'Buka Kamera';
+      }
+    }
+
+    function searchTopupStudentByScan() {
+      const scanVal = document.getElementById('topup-scan-input').value.trim().toLowerCase();
+      if (!scanVal) return;
+
+      const student = students.find(s => s.status !== 'DIHAPUS' && (s.nis.toLowerCase() === scanVal || s.accountNo.toLowerCase() === scanVal || s.id.toLowerCase() === scanVal));
+      if (student) {
+        document.getElementById('pos-topup-student').value = student.id;
+        showToast(`Terpilih: ${student.name}`);
+      } else {
+        showToast("Siswa tidak ditemukan!", "error");
+      }
+    }
+
+    function setPosTopupAmount(amount) {
+      document.getElementById('pos-topup-amount').value = amount;
+    }
+
+    function handlePosTopupSubmit(e) {
+      e.preventDefault();
+      const studentId = document.getElementById('pos-topup-student').value;
+      const amount = parseFloat(document.getElementById('pos-topup-amount').value);
+
+      if (!studentId || isNaN(amount) || amount <= 0) {
+        showToast('Pilih siswa dan nominal top up dengan benar!', 'error');
+        return;
+      }
+
+      const student = students.find(s => s.id === studentId);
+      if (!student) return;
+
+      student.balance += amount;
+
+      const posTopupTxRecord = {
+        id: `TOP-${Date.now()}`,
+        type: 'TOPUP',
+        date: new Date().toLocaleDateString('id-ID'),
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        studentId: student.id,
+        studentName: student.name,
+        accountNo: student.accountNo,
+        amount: amount,
+        lastBalance: student.balance
+      };
+
+      posHistory.unshift({
+        id: posTopupTxRecord.id,
+        date: posTopupTxRecord.date,
+        time: posTopupTxRecord.time,
+        studentId: student.id,
+        studentName: student.name,
+        accountNo: student.accountNo,
+        items: [{ name: '⚡ ISI SALDO TABUNGAN', qty: 1, price: amount }],
+        total: amount,
+        lastBalance: student.balance,
+        isTopup: true
+      });
+
+      transactions.push({
+        id: posTopupTxRecord.id,
+        date: posTopupTxRecord.date,
+        time: posTopupTxRecord.time,
+        studentId: student.id,
+        code: 'KM',
+        type: 'DEPOSIT',
+        amount: amount,
+        runningBalance: student.balance,
+        teller: currentUser ? currentUser.name : 'POS-KASIR',
+        notes: 'Top Up Saldo di Kantin'
+      });
+
+      saveStorage();
+      updatePosStudentDropdown();
+      renderStudentsTable();
+      renderPassbook();
+      updateTransactionDropdowns();
+      renderPosHistory();
+
+      closeModalPosTopup();
+      showToast(`Isi saldo ${formatRupiah(amount)} untuk ${student.name} Berhasil!`);
+      showPosReceiptModal(posTopupTxRecord.id);
+    }
+
     function togglePosCameraScanner() { if (isPosCameraActive) stopPosCameraScanner(); else startPosCameraScanner(); }
 
-    function startPosCameraScanner() {
+    async function startPosCameraScanner() {
       const wrapper = document.getElementById('pos-camera-wrapper');
       wrapper.classList.remove('hidden');
       document.getElementById('btn-pos-camera-toggle').innerText = '🛑 Stop Kamera';
@@ -914,13 +1706,13 @@
         processPosPayment(); stopPosCameraScanner();
       };
 
-      posQrScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
-        .then(() => { isPosCameraActive = true; })
-        .catch(() => {
-          posQrScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
-            .then(() => { isPosCameraActive = true; })
-            .catch(() => { showToast("Gagal membuka kamera belakang Android", "error"); stopPosCameraScanner(); });
-        });
+      const isStarted = await startScannerInstance(posQrScanner, onScanSuccess);
+      if (isStarted) {
+        isPosCameraActive = true;
+      } else {
+        showToast("Kamera tidak bisa dibuka.", "error");
+        stopPosCameraScanner();
+      }
     }
 
     function stopPosCameraScanner() {
@@ -930,6 +1722,9 @@
           document.getElementById('pos-camera-wrapper').classList.add('hidden');
           document.getElementById('btn-pos-camera-toggle').innerText = '📷 Buka Kamera Scan Kartu';
         }).catch(() => {});
+      } else {
+        document.getElementById('pos-camera-wrapper').classList.add('hidden');
+        document.getElementById('btn-pos-camera-toggle').innerText = '📷 Buka Kamera Scan Kartu';
       }
     }
 
@@ -961,11 +1756,12 @@
         accountNo: student.accountNo,
         items: [...posCart],
         total: totalAmount,
-        lastBalance: student.balance
+        lastBalance: student.balance,
+        isTopup: false
       };
 
       posHistory.unshift(posTxRecord);
-      transactions.push({ id: posTxRecord.id, date: posTxRecord.date, time: posTxRecord.time, studentId: student.id, type: 'WITHDRAWAL', amount: totalAmount, runningBalance: student.balance, teller: 'POS-TOKO' });
+      transactions.push({ id: posTxRecord.id, date: posTxRecord.date, time: posTxRecord.time, studentId: student.id, type: 'WITHDRAWAL', amount: totalAmount, runningBalance: student.balance, teller: currentUser ? currentUser.name : 'POS-KANTIN' });
 
       saveStorage();
       showToast(`Transaksi ${formatRupiah(totalAmount)} oleh ${student.name} Berhasil!`);
@@ -982,37 +1778,49 @@
       const record = posHistory.find(h => h.id === posTxId);
       if (!record) return;
 
+      const modalTitle = document.getElementById('receipt-modal-title');
+      const modalSubtitle = document.getElementById('receipt-modal-subtitle');
+
+      if (record.isTopup) {
+        modalTitle.innerText = '💵 Slip Bukti Setoran / Top-Up Saldo';
+        modalSubtitle.innerText = 'Pratinjau Slip Setor Tunai Tabungan Siswa';
+      } else {
+        modalTitle.innerText = '🧾 Struk Transaksi Kantin';
+        modalSubtitle.innerText = 'Pratinjau Slip Nota Belanja Kasir Kantin';
+      }
+
       const area = document.getElementById('receipt-print-area');
       area.innerHTML = `
         <div class="text-center space-y-0.5 border-b border-dashed border-slate-400 pb-2">
           <p class="font-bold text-xs uppercase">${designConfig.schoolName}</p>
-          <p class="text-[9px]">KANTIN & TOKO KOPERASI SEKOLAH</p>
+          <p class="text-[9px] uppercase font-bold text-emerald-800">${record.isTopup ? 'SLIP SETORAN TUNAI TABUNGAN' : 'KANTIN & TOKO KOPERASI SEKOLAH'}</p>
           <p class="text-[8px] opacity-75">${record.date} ${record.time} | ID: ${record.id}</p>
         </div>
         <div class="border-b border-dashed border-slate-400 py-1 space-y-0.5 text-[10px]">
-          <p><strong>Pembayar:</strong> ${record.studentName}</p>
-          <p><strong>No Rek:</strong> ${record.accountNo}</p>
+          <p><strong>Nama Siswa:</strong> ${record.studentName}</p>
+          <p><strong>No Rekening:</strong> ${record.accountNo}</p>
+          <p><strong>Petugas:</strong> ${currentUser ? currentUser.name : 'Kasir System'}</p>
         </div>
         <div class="border-b border-dashed border-slate-400 py-2 space-y-1">
           ${record.items.map(i => `
             <div class="flex justify-between text-[10px]">
-              <span>${i.name} x${i.qty}</span>
+              <span>${i.name} ${i.qty > 1 ? `x${i.qty}` : ''}</span>
               <span class="font-mono">${formatRupiah(i.price * i.qty)}</span>
             </div>
           `).join('')}
         </div>
         <div class="pt-1 text-[10px] space-y-1">
           <div class="flex justify-between font-bold">
-            <span>TOTAL:</span>
-            <span class="font-mono">${formatRupiah(record.total)}</span>
+            <span>TOTAL ${record.isTopup ? 'SETORAN' : 'TRANSAKSI'}:</span>
+            <span class="font-mono ${record.isTopup ? 'text-emerald-700' : ''}">${formatRupiah(record.total)}</span>
           </div>
           <div class="flex justify-between text-[9px] opacity-75">
             <span>METODE:</span>
-            <span>POTONG SALDO TABUNGAN</span>
+            <span>${record.isTopup ? 'SETOR TUNAI KASIR' : 'POTONG SALDO TABUNGAN'}</span>
           </div>
           <div class="flex justify-between text-[9px] opacity-75">
-            <span>SISA SALDO:</span>
-            <span class="font-mono">${formatRupiah(record.lastBalance)}</span>
+            <span>TOTAL SALDO SEKARANG:</span>
+            <span class="font-mono font-bold">${formatRupiah(record.lastBalance)}</span>
           </div>
         </div>
         <div class="text-center pt-2 border-t border-dashed border-slate-400 text-[8px] opacity-75">
@@ -1024,9 +1832,7 @@
       document.getElementById('modal-pos-receipt').classList.remove('hidden');
     }
 
-    function closeModalPosReceipt() {
-      document.getElementById('modal-pos-receipt').classList.add('hidden');
-    }
+    function closeModalPosReceipt() { document.getElementById('modal-pos-receipt').classList.add('hidden'); }
 
     function renderPosHistory() {
       const tbody = document.getElementById('pos-history-body');
@@ -1041,10 +1847,10 @@
         <tr class="hover:bg-slate-50">
           <td class="p-2.5 font-mono text-slate-800">${h.date}<span class="block text-[9px] text-slate-400">${h.time}</span></td>
           <td class="p-2.5 font-bold text-slate-900">${h.studentName}</td>
-          <td class="p-2.5 text-slate-600">${h.items.map(i => `${i.name} (${i.qty})`).join(', ')}</td>
-          <td class="p-2.5 text-right font-black text-emerald-700 font-mono">${formatRupiah(h.total)}</td>
+          <td class="p-2.5 text-slate-600 font-bold">${h.isTopup ? '💵 <span class="text-amber-600">Isi Saldo Tabungan</span>' : h.items.map(i => `${i.name} (${i.qty})`).join(', ')}</td>
+          <td class="p-2.5 text-right font-black font-mono ${h.isTopup ? 'text-blue-600' : 'text-emerald-700'}">${formatRupiah(h.total)}</td>
           <td class="p-2.5 text-center">
-            <button onclick="showPosReceiptModal('${h.id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-[10px] active-scale">🧾 Struk</button>
+            <button onclick="showPosReceiptModal('${h.id}')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg text-[10px] active-scale">🧾 Slip</button>
           </td>
         </tr>
       `).join('');
@@ -1053,12 +1859,11 @@
     /* TELLER & SCANNER KARTU TRANSAKSI */
     function toggleCameraScanner() { if (isCameraActive) stopCameraScanner(); else startCameraScanner(); }
 
-    function startCameraScanner() {
+    async function startCameraScanner() {
       const wrapper = document.getElementById('camera-preview-wrapper');
       wrapper.classList.remove('hidden');
       document.getElementById('btn-camera-toggle').innerText = '🛑 Stop Kamera';
       const badge = document.getElementById('scan-status-badge');
-      if (badge) { badge.innerText = 'KAMERA AKTIF'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500 text-slate-900 font-bold'; }
 
       html5QrCodeScanner = new Html5Qrcode("qr-reader");
       const onScanSuccess = (decodedText) => {
@@ -1066,13 +1871,14 @@
         handleScanCard(); stopCameraScanner();
       };
 
-      html5QrCodeScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
-        .then(() => { isCameraActive = true; })
-        .catch(() => {
-          html5QrCodeScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
-            .then(() => { isCameraActive = true; })
-            .catch(() => { showToast("Gagal membuka kamera scanner", "error"); stopCameraScanner(); });
-        });
+      const isStarted = await startScannerInstance(html5QrCodeScanner, onScanSuccess);
+      if (isStarted) {
+        isCameraActive = true;
+        if (badge) { badge.innerText = 'KAMERA AKTIF'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500 text-slate-900 font-bold'; }
+      } else {
+        showToast("Kamera tidak dapat dibuka", "error");
+        stopCameraScanner();
+      }
     }
 
     function stopCameraScanner() {
@@ -1084,6 +1890,9 @@
           const badge = document.getElementById('scan-status-badge');
           if (badge) { badge.innerText = 'SIAP SCAN'; badge.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'; }
         }).catch(() => {});
+      } else {
+        document.getElementById('camera-preview-wrapper').classList.add('hidden');
+        document.getElementById('btn-camera-toggle').innerText = '📷 Buka Kamera';
       }
     }
 
@@ -1140,7 +1949,7 @@
       if (type === 'WITHDRAWAL' && student.balance < amount) { showToast('Saldo tidak mencukupi!', 'error'); return; }
       if (type === 'DEPOSIT') student.balance += amount; else student.balance -= amount;
 
-      transactions.push({ id: `TRX-${Date.now()}`, date: new Date().toLocaleDateString('id-ID'), time: '10:00', studentId: student.id, type, amount, runningBalance: student.balance, teller: 'TLR01' });
+      transactions.push({ id: `TRX-${Date.now()}`, date: new Date().toLocaleDateString('id-ID'), time: '10:00', studentId: student.id, type, amount, runningBalance: student.balance, teller: currentUser ? currentUser.name : 'TLR01' });
       saveStorage(); updateTransactionDropdowns(); renderPassbook();
       document.getElementById('tx-amount').value = '';
       showToast(`Transaksi ${type === 'DEPOSIT' ? 'Setor' : 'Tarik'} ${formatRupiah(amount)} Berhasil!`);
@@ -1151,13 +1960,19 @@
       const select = document.getElementById('balance-select-student');
       const activeStudents = students.filter(s => s.status !== 'DIHAPUS');
       if (!select) return;
+
+      if (currentUser && currentUser.role === 'CEK_SALDO') {
+        select.innerHTML = '<option value="">-- Hak Akses Terkunci (Privasi Sistem) --</option>';
+        return;
+      }
+
       select.innerHTML = '<option value="">-- Pilih Nama Siswa untuk Cek Saldo --</option>' + 
         activeStudents.map(s => `<option value="${s.id}">${s.name} - ${s.class} (${s.nis})</option>`).join('');
     }
 
     function toggleBalanceCamera() { if (isBalanceCameraActive) stopBalanceCamera(); else startBalanceCamera(); }
 
-    function startBalanceCamera() {
+    async function startBalanceCamera() {
       const wrapper = document.getElementById('balance-camera-wrapper');
       wrapper.classList.remove('hidden');
       document.getElementById('btn-balance-cam-toggle').innerText = '🛑 Stop Kamera';
@@ -1168,13 +1983,13 @@
         executeBalanceCheck(); stopBalanceCamera();
       };
 
-      balanceQrScanner.start(getCameraConstraint(), createScannerConfig(), onScanSuccess, () => {})
-        .then(() => { isBalanceCameraActive = true; })
-        .catch(() => {
-          balanceQrScanner.start({ facingMode: "environment" }, createScannerConfig(), onScanSuccess, () => {})
-            .then(() => { isBalanceCameraActive = true; })
-            .catch(() => { showToast("Gagal membuka kamera scan saldo", "error"); stopBalanceCamera(); });
-        });
+      const isStarted = await startScannerInstance(balanceQrScanner, onScanSuccess);
+      if (isStarted) {
+        isBalanceCameraActive = true;
+      } else {
+        showToast("Gagal membuka kamera scan saldo", "error");
+        stopBalanceCamera();
+      }
     }
 
     function stopBalanceCamera() {
@@ -1182,12 +1997,16 @@
         balanceQrScanner.stop().then(() => {
           balanceQrScanner.clear(); isBalanceCameraActive = false;
           document.getElementById('balance-camera-wrapper').classList.add('hidden');
-          document.getElementById('btn-balance-cam-toggle').innerText = 'Buka Kamera';
+          document.getElementById('btn-balance-cam-toggle').innerText = 'Buka Kamera Scan';
         }).catch(() => {});
+      } else {
+        document.getElementById('balance-camera-wrapper').classList.add('hidden');
+        document.getElementById('btn-balance-cam-toggle').innerText = 'Buka Kamera Scan';
       }
     }
 
     function executeBalanceCheckSelect() {
+      if (currentUser && currentUser.role === 'CEK_SALDO') return;
       const id = document.getElementById('balance-select-student').value;
       if (id) displayBalanceModalById(id);
     }
@@ -1421,8 +2240,7 @@
 
       const canvas = document.getElementById('receipt-canvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 1014;
-      canvas.height = 640;
+      canvas.width = 1014; canvas.height = 640;
 
       const loadImageAsync = (src) => new Promise((resolve) => {
         if (!src) return resolve(null);
@@ -1444,8 +2262,7 @@
         } else {
           grad.addColorStop(0, '#064e3b'); grad.addColorStop(0.5, '#047857'); grad.addColorStop(1, '#022c22');
         }
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const svgBarcodeString = generateBarcodeSVG(student.nis);
         const svgBlob = new Blob([svgBarcodeString], { type: 'image/svg+xml;charset=utf-8' });
@@ -1473,14 +2290,12 @@
         ctx.fillStyle = '#cbd5e1';
         ctx.fillText(designConfig.schoolName.toUpperCase(), startXText, 90);
 
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.moveTo(60, 125); ctx.lineTo(954, 125); ctx.stroke();
 
         if (avatarImg) {
           ctx.drawImage(avatarImg, 60, 160, 170, 215);
-          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-          ctx.lineWidth = 4;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)'; ctx.lineWidth = 4;
           ctx.strokeRect(60, 160, 170, 215);
         }
 
@@ -1529,12 +2344,10 @@
         link.href = canvas.toDataURL('image/png');
         link.click();
         showToast('Kartu Digital Berhasil Diunduh!');
-      } catch (e) {
-        showToast('Gagal mengunduh kartu digital', 'error');
-      }
+      } catch (e) { showToast('Gagal mengunduh kartu digital', 'error'); }
     }
 
-    /* RENDER TABEL NASABAH */
+    /* RENDER TABEL NASABAH (KHUSUS ADMIN UTAMA) */
     function renderStudentsTable() {
       const tbody = document.getElementById('student-table-body');
       const search = document.getElementById('search-student-input')?.value.toLowerCase() || '';
@@ -1605,9 +2418,8 @@
       if (!student) return;
       if (confirm(`Hapus data nasabah ${student.name}?`)) {
         student.status = 'DIHAPUS';
-        saveStorage();
-        renderStudentsTable(); renderPassbook(); populateBalanceSelect(); updatePosStudentDropdown();
-        showToast('Rekening berhasil dihapus');
+        saveStorage(); renderStudentsTable(); renderPassbook(); populateBalanceSelect(); updatePosStudentDropdown();
+        showToast('Rekening dihapus');
       }
     }
 
@@ -1739,14 +2551,34 @@
         const reader = new FileReader();
         reader.onload = (e) => {
           institutionLogoBase64 = e.target.result; applyHeaderLogo(institutionLogoBase64); saveStorage();
-          renderDigitalCard(); renderIDCard(); renderPassbook(); showToast('Logo berhasil diunggah!');
+          renderDigitalCard(); renderIDCard(); renderPassbook(); showToast('Logo diunggah!');
         };
         reader.readAsDataURL(file);
       }
     }
 
     window.onload = () => {
-      loadStorage(); updatePosStudentDropdown(); renderPosCart(); renderPosHistory(); populateBalanceSelect(); renderPassbook(); renderDigitalCard(); renderStudentsTable(); renderIDCard(); updateTransactionDropdowns();
+      loadStorage(); 
+      if (currentUser) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-content').classList.remove('hidden');
+        applyUserSessionPermissions();
+      } else {
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('app-content').classList.add('hidden');
+      }
+
+      renderQuickMenus();
+      updatePosStudentDropdown(); 
+      renderPosCart(); 
+      renderPosHistory(); 
+      populateBalanceSelect(); 
+      renderPassbook(); 
+      renderDigitalCard(); 
+      renderStudentsTable(); 
+      renderIDCard(); 
+      updateTransactionDropdowns();
+      renderUsersTable();
     };
   </script>
 </body>
